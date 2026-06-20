@@ -1,88 +1,78 @@
-Você é um arquiteto frontend sênior especializado em Next.js, React, TypeScript e sistemas administrativos.
+# .ai/project.md
 
-Crie um painel administrativo para gerenciamento de um catálogo de exercícios físicos.
+# GymTracker Admin
 
-Stack:
+## Objetivo
+
+Interface administrativa para manutenção do catálogo.
+
+Todos os dados são persistidos através da GymTracker API.
+
+---
+
+# Stack
+
+Framework
 
 - Next.js 15
-- React 19
+
+Linguagem
+
 - TypeScript
+
+UI
+
 - TailwindCSS
 - Shadcn UI
+
+Formulários
+
 - React Hook Form
 - Zod
-- TanStack Query
+
+Requisições
+
 - Axios
 
-Arquitetura:
+Cache
 
-src/
-├── app/
-├── components/
-├── features/
-├── hooks/
-├── services/
-├── lib/
-├── types/
+- TanStack Query
 
-Funcionalidades:
+---
 
-Dashboard
+# Regras
 
-- Total de exercícios
-- Total de grupos musculares
-- Total de equipamentos
-- Total de substituições
+Toda comunicação deve ocorrer via API.
 
-CRUD Exercícios
+Não acessar banco diretamente.
 
-Campos:
+---
 
-- Nome
-- Slug
-- Descrição
-- Dicas de execução
-- Dificuldade
-- Grupo de movimento
-- Grupo muscular
-- Equipamentos
+# Arquitetura
 
-Mídias:
+Feature First
 
-- Thumbnail
-- Imagem
-- GIF
-- Vídeo
+Cada módulo deve conter:
 
-Passo a passo:
+- Components
+- Hooks
+- Services
+- Schemas
+- Types
 
-- Adicionar instruções ordenadas
+---
 
-Substituições:
+# Design
 
-- Selecionar exercício principal
-- Selecionar múltiplas substituições
+Seguir:
 
-CRUD Equipamentos
+.ai/design/\*
 
-CRUD Grupos Musculares
+---
 
-CRUD Grupos de Movimento
+# Objetivos
 
-Upload de mídia
-
-- GIF
-- MP4
-- WEBP
-- JPG
-- PNG
-
-Requisitos:
-
-- Interface moderna
-- Responsiva
-- Desktop First
-- Dark mode opcional
-- Design system reutilizável
-- Preparado para autenticação futura
-
+- Facilidade de uso
+- Produtividade
+- Consistência visual
+- Responsividade
