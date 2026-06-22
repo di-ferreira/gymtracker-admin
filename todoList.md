@@ -99,3 +99,16 @@
 - [x] Empty states personalizados por entidade
 - [x] Responsividade: sidebar colapsável em mobile com overlay
 - [x] Acessibilidade: aria-labels, heading hierarchy, focus visible
+
+## Fase 10 — Testes de Integração (mockados)
+- [x] Configurar Playwright + chromium
+- [x] Mock API com `page.route()` — dados de exemplo em `e2e/mocks.ts`
+- [x] Teste: dashboard carrega com métricas, skeleton e empty state
+- [x] Teste: navegação entre todas as rotas via sidebar + sidebar mobile
+- [x] Teste: CRUD de exercício (criar, editar, excluir, validação, busca, skeleton, empty)
+- [x] Teste: CRUD de equipamento (criar, excluir)
+- [x] Teste: CRUD de grupo muscular (criar)
+- [x] Teste: CRUD de grupo de movimento (criar)
+- [x] Teste: adicionar/remover substituição
+- [x] Teste: mídia (grid, filtro tipo, preview modal)
+- [x] Teste: versão do catálogo (exibir, diálogo publicar)
