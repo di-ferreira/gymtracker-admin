@@ -1,6 +1,6 @@
 import api from "@/lib/api";
 
-const endpoint = "/admin/catalog/media";
+const endpoint = "/admin/media";
 
 export interface MediaItem {
   id: string;
@@ -18,19 +18,19 @@ export interface MediaUploadResponse {
 
 export const mediaService = {
   list: (params?: { type?: string; page?: number; per_page?: number }) =>
-    api.get(`${endpoint}/`, { params }).then((r) => r.data),
+    api.get(`${endpoint}/`).then((r) => r.data),
 
-  upload: async (file: File, type: string) => {
+  upload: async (file: File, _type: string) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("type", type);
     return api
       .post<MediaUploadResponse>(`${endpoint}/upload`, formData, {
+        params: { folder: "exercises" },
         headers: { "Content-Type": "multipart/form-data" },
       })
       .then((r) => r.data);
   },
 
-  remove: (id: string) =>
-    api.delete(`${endpoint}/${id}`).then(() => undefined),
+  remove: (folder: string, filename: string) =>
+    api.delete(`${endpoint}/${folder}/${filename}`).then(() => undefined),
 };

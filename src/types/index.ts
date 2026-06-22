@@ -123,19 +123,19 @@ export interface Exercise {
   description: string | null;
   execution_tips: string | null;
   difficulty: DifficultyLevel | null;
-  target_muscle_primary: string | null;
+  target_muscle_primary?: string | null;
   thumbnail_url: string | null;
   image_url: string | null;
   gif_url: string | null;
   video_url: string | null;
   movement_group_id: string;
   muscle_group_id: string;
-  movement_group: MovementGroup;
-  muscle_group: MuscleGroup;
-  equipment_relations: ExerciseEquipment[];
-  instructions: ExerciseInstruction[];
-  alternatives: ExerciseAlternative[];
-  deleted_at: string | null;
+  movement_group?: MovementGroup;
+  muscle_group?: MuscleGroup;
+  equipment_relations?: ExerciseEquipment[];
+  instructions?: ExerciseInstruction[];
+  alternatives?: ExerciseAlternative[];
+  deleted_at?: string | null;
   created_at: string;
   updated_at: string;
 }

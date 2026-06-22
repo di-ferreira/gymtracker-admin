@@ -229,8 +229,8 @@ export default function ExerciseDetailPage() {
             <div className="mt-4">
               <span className="text-sm text-muted-foreground">Equipamentos</span>
               <div className="flex flex-wrap gap-2 mt-2">
-                {exercise.equipment_relations?.length > 0 ? (
-                  exercise.equipment_relations.map((rel) => (
+                {exercise.equipment_relations && exercise.equipment_relations.length > 0 ? (
+                  exercise.equipment_relations!.map((rel) => (
                     <Badge
                       key={rel.equipment_id}
                       variant="secondary"

@@ -52,7 +52,7 @@ export default function MediaPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => mediaService.remove(id),
+    mutationFn: (filename: string) => mediaService.remove("exercises", filename),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["media"] });
       toast.success("Mídia excluída");
@@ -159,7 +159,7 @@ export default function MediaPage() {
                     className="opacity-0 group-hover:opacity-100 transition-opacity absolute top-2 right-2"
                     onClick={(e) => {
                       e.stopPropagation();
-                      deleteMutation.mutate(media.id);
+                      deleteMutation.mutate(media.filename);
                     }}
                   >
                     <Trash2 className="h-4 w-4" />
