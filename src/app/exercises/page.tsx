@@ -2,6 +2,8 @@
 
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { useExerciseList } from "@/hooks/use-exercises";
+import { useMuscleGroupList } from "@/hooks/use-muscle-groups";
+import { useMovementGroupList } from "@/hooks/use-movement-groups";
 import { useState } from "react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
@@ -28,6 +30,11 @@ const difficultyColor: Record<string, string> = {
 export default function ExerciseListPage() {
   const [search, setSearch] = useState("");
   const { data, isLoading } = useExerciseList({ search, per_page: 20 });
+  const { data: muscleGroups } = useMuscleGroupList({ per_page: 100 });
+  const { data: movementGroups } = useMovementGroupList({ per_page: 100 });
+
+  const muscleGroupMap = new Map(muscleGroups?.data.map((mg) => [mg.id, mg.name]));
+  const movementGroupMap = new Map(movementGroups?.data.map((mg) => [mg.id, mg.name]));
 
   return (
     <DashboardLayout>
@@ -110,10 +117,10 @@ export default function ExerciseListPage() {
                       )}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {exercise.muscle_group?.name ?? "—"}
+                      {muscleGroupMap.get(exercise.muscle_group_id) ?? exercise.muscle_group_id}
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {exercise.movement_group?.name ?? "—"}
+                      {movementGroupMap.get(exercise.movement_group_id) ?? exercise.movement_group_id}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-2">

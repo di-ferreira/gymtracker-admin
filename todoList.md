@@ -1,6 +1,7 @@
 # GymTracker Admin — Todo List
 
 ## Fase 1 — Setup do Projeto
+
 - [x] Inicializar Next.js 15 + React 19 + TypeScript com TailwindCSS
 - [x] Configurar Shadcn UI com tema customizado dark
 - [x] Estruturar pastas feature-based
@@ -10,6 +11,7 @@
 - [x] Configurar ESLint + Prettier
 
 ## Fase 2 — Design System & Tokens
+
 - [x] Extrair tokens do `design-system/` (cores, tipografia, spacing, radius, shadows, motion)
 - [x] Implementar `globals.css` com variáveis CSS do tema dark GymTracker
 - [x] Build de componentes base do Shadcn:
@@ -26,6 +28,7 @@
   - Toaster + TooltipProvider no root layout
 
 ## Fase 3 — Infraestrutura de Dados
+
 - [x] Criar types/entities adicionais (`ApiResponse<T>`, `PaginatedResponse<T>`)
 - [x] Criar schemas Zod para cada formulário:
   - `exerciseSchema`, `equipmentSchema`, `muscleGroupSchema`, `movementGroupSchema`, `substitutionSchema`
@@ -45,6 +48,7 @@
   - `hooks/use-movement-groups.ts`
 
 ## Fase 4 — CRUD de Exercícios
+
 - [x] Página **Exercise List** (`/exercises`):
   - Tabela com colunas: nome, dificuldade, grupo muscular, equipamentos
   - Search por nome
@@ -60,6 +64,7 @@
 - [x] Modal de delete com confirmação
 
 ## Fase 5 — CRUD de Entidades de Suporte
+
 - [x] **Equipamentos** (`/equipment`):
   - Lista, Create, Edit, Delete (diálogos inline)
 - [x] **Grupos Musculares** (`/muscle-groups`):
@@ -68,6 +73,7 @@
   - Lista, Create, Edit, Delete (diálogos inline)
 
 ## Fase 6 — Relacionamentos & Mídias
+
 - [x] Página **Alternative Exercises** (`/alternatives`):
   - Selecionar exercício principal (sidebar com search)
   - Adicionar/remover substituições (relação n:n)
@@ -79,12 +85,14 @@
 - [x] Modal de preview de mídia (imagem/vídeo em tela cheia)
 
 ## Fase 7 — Dashboard
+
 - [x] Página **Dashboard** (`/`):
   - Cards de métricas com dados reais da API (total exercises, muscle groups, equipment, substitutions)
   - Loading skeleton
   - Estado vazio quando sem dados
 
 ## Fase 8 — Versionamento & Publicação
+
 - [x] Página **Catalog Version** (`/catalog-version`):
   - Exibir versão atual do catálogo
   - Botão "Publicar nova versão" com diálogo
@@ -93,6 +101,7 @@
   - Histórico de versões publicadas
 
 ## Fase 9 — Polimento Final
+
 - [x] Traduzir mensagens de validação Zod para português
 - [x] Tratamento global de erros da API com toasts (interceptor Axios)
 - [x] Estados de loading/skeleton em todas as páginas
@@ -100,27 +109,8 @@
 - [x] Responsividade: sidebar colapsável em mobile com overlay
 - [x] Acessibilidade: aria-labels, heading hierarchy, focus visible
 
-## Fase 11 — Sistema de Login (Admin)
-- [x] Instalar js-cookie e @types/js-cookie
-- [x] Criar auth service (login, me)
-- [x] Criar AuthContext (cookie token, user state, login/logout)
-- [x] Criar /login com formulário + validação de admin
-- [x] Criar proxy.ts (proteção de rotas via cookie — Next.js 16)
-- [x] Atualizar Axios interceptor para usar cookie (js-cookie)
-- [x] Atualizar Topbar (nome real + Sair)
-- [x] Adicionar "Sair" no sidebar
-- [x] Wrap root layout com AuthProvider
-
-## Fase 12 — Integração com API Real
-- [ ] Ajustar tipos (slug opcional Equipment/MuscleGroup/MovementGroup)
-- [ ] Remover campos não aceitos dos schemas Zod
-- [ ] Ajustar formulários criar/editar exercício
-- [ ] Exibir IDs em vez de nomes aninhados no detalhe
-- [ ] Transformar página de mídia em upload-only
-- [ ] Verificar endpoints substituições e versão
-- [ ] Testar CRUD completo com API rodando
-
 ## Fase 10 — Testes de Integração (mockados)
+
 - [x] Configurar Playwright + chromium
 - [x] Mock API com `page.route()` — dados de exemplo em `e2e/mocks.ts`
 - [x] Teste: dashboard carrega com métricas, skeleton e empty state
@@ -132,3 +122,25 @@
 - [x] Teste: adicionar/remover substituição
 - [x] Teste: mídia (grid, filtro tipo, preview modal)
 - [x] Teste: versão do catálogo (exibir, diálogo publicar)
+
+## Fase 11 — Sistema de Login (Admin)
+
+- [x] Instalar js-cookie e @types/js-cookie
+- [x] Criar auth service (login, me)
+- [x] Criar AuthContext (cookie token, user state, login/logout)
+- [x] Criar /login com formulário + validação de admin
+- [x] Criar proxy.ts (proteção de rotas via cookie — Next.js 16)
+- [x] Atualizar Axios interceptor para usar cookie (js-cookie)
+- [x] Atualizar Topbar (nome real + Sair)
+- [x] Adicionar "Sair" no sidebar
+- [x] Wrap root layout com AuthProvider
+
+## Fase 12 — Integração com API Real
+
+- [x] Ajustar tipos (slug opcional Equipment/MuscleGroup/MovementGroup)
+- [x] Remover campos não aceitos dos schemas Zod (exerciseSchema: equipment_ids, instructions, target_muscle_primary)
+- [x] Ajustar formulários criar/editar exercício (remove step builder, equipment multi-select)
+- [x] Buscar nomes via lookup maps para exibir muscle_group/movement_group no list e detail
+- [x] Transformar página de mídia em upload-only (API não tem endpoint de listagem)
+- [x] Verificar endpoints: substituições e versão não existem na API — páginas mantidas com empty state
+- [ ] Testar CRUD completo com API rodando

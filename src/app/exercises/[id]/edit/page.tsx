@@ -3,12 +3,11 @@
 import { useParams, useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { useExercise, useUpdateExercise } from "@/hooks/use-exercises";
-import { useEquipmentList } from "@/hooks/use-equipment";
 import { useMuscleGroupList } from "@/hooks/use-muscle-groups";
 import { useMovementGroupList } from "@/hooks/use-movement-groups";
 import { exerciseSchema, type ExerciseFormData } from "@/lib/schemas";
 import type { ExerciseUpdate } from "@/types";
-import { useForm, useFieldArray } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -32,7 +31,7 @@ import {
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowUp, ArrowDown, Plus, Trash2, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
 export default function EditExercisePage() {
@@ -41,7 +40,6 @@ export default function EditExercisePage() {
   const id = params.id as string;
   const { data, isLoading } = useExercise(id);
   const updateExercise = useUpdateExercise();
-  const { data: equipmentData } = useEquipmentList({ per_page: 100 });
   const { data: muscleGroupData } = useMuscleGroupList({ per_page: 100 });
   const { data: movementGroupData } = useMovementGroupList({ per_page: 100 });
 
@@ -51,38 +49,23 @@ export default function EditExercisePage() {
     resolver: zodResolver(exerciseSchema),
     defaultValues: {
       name: "",
-      slug: "",
       description: "",
       execution_tips: "",
       difficulty: undefined,
       movement_group_id: "",
       muscle_group_id: "",
-      equipment_ids: [],
-      instructions: [],
     },
-  });
-
-  const { fields, append, remove, swap } = useFieldArray({
-    control: form.control,
-    name: "instructions",
   });
 
   useEffect(() => {
     if (exercise) {
       form.reset({
         name: exercise.name,
-        slug: exercise.slug,
         description: exercise.description ?? "",
         execution_tips: exercise.execution_tips ?? "",
         difficulty: exercise.difficulty ?? undefined,
         movement_group_id: exercise.movement_group_id,
         muscle_group_id: exercise.muscle_group_id,
-        equipment_ids: exercise.equipment_relations?.map((r) => r.equipment_id) ?? [],
-        instructions: exercise.instructions?.map((i) => ({
-          step_order: i.step_order,
-          description: i.description,
-          image_url: i.image_url,
-        })) ?? [],
       });
     }
   }, [exercise, form]);
@@ -91,12 +74,9 @@ export default function EditExercisePage() {
     try {
       const payload: ExerciseUpdate = {
         name: data.name,
-        slug: data.slug || undefined,
         description: data.description || undefined,
         execution_tips: data.execution_tips || undefined,
         difficulty: data.difficulty ?? undefined,
-        movement_group_id: data.movement_group_id,
-        muscle_group_id: data.muscle_group_id,
         thumbnail_url: data.thumbnail_url || undefined,
         image_url: data.image_url || undefined,
         gif_url: data.gif_url || undefined,
@@ -165,20 +145,6 @@ export default function EditExercisePage() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nome</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="slug"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Slug</FormLabel>
                       <FormControl>
                         <Input {...field} />
                       </FormControl>
@@ -298,125 +264,6 @@ export default function EditExercisePage() {
                     </FormItem>
                   )}
                 />
-
-                <FormField
-                  control={form.control}
-                  name="equipment_ids"
-                  render={({ field }) => {
-                    const equipmentValue = field.value ?? [];
-                    return (
-                      <FormItem>
-                        <FormLabel>Equipamentos</FormLabel>
-                        <Select
-                          onValueChange={(newValue) => {
-                            if (newValue && !equipmentValue.includes(newValue)) {
-                              field.onChange([...equipmentValue, newValue]);
-                            }
-                          }}
-                          value=""
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Adicionar equipamento" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {equipmentData?.data
-                              .filter((eq) => !equipmentValue.includes(eq.id))
-                              .map((eq) => (
-                                <SelectItem key={eq.id} value={eq.id}>
-                                  {eq.name}
-                                </SelectItem>
-                              ))}
-                          </SelectContent>
-                        </Select>
-                        <div className="flex flex-wrap gap-2 mt-2">
-                          {equipmentValue.map((eqId) => {
-                            const eq = equipmentData?.data.find((e) => e.id === eqId);
-                            return (
-                              <div
-                                key={eqId}
-                                className="inline-flex items-center gap-1 rounded-full border border-border bg-accent px-3 py-1 text-sm"
-                              >
-                                {eq?.name ?? eqId}
-                                <button
-                                  type="button"
-                                  className="text-muted-foreground hover:text-foreground ml-1"
-                                  onClick={() =>
-                                    field.onChange(equipmentValue.filter((v) => v !== eqId))
-                                  }
-                                >
-                                  ×
-                                </button>
-                              </div>
-                            );
-                          })}
-                        </div>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Instruções</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {fields.map((field, index) => (
-                  <div
-                    key={field.id}
-                    className="flex items-start gap-3 rounded-lg border border-border p-4"
-                  >
-                    <div className="flex flex-col gap-1 mt-1">
-                      <button
-                        type="button"
-                        onClick={() => swap(index, index - 1)}
-                        disabled={index === 0}
-                        className="text-muted-foreground hover:text-foreground disabled:opacity-30"
-                      >
-                        <ArrowUp className="h-3 w-3" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => swap(index, index + 1)}
-                        disabled={index === fields.length - 1}
-                        className="text-muted-foreground hover:text-foreground disabled:opacity-30"
-                      >
-                        <ArrowDown className="h-3 w-3" />
-                      </button>
-                    </div>
-                    <div className="flex-1 space-y-2">
-                      <p className="text-sm font-medium">Passo {index + 1}</p>
-                      <Textarea
-                        placeholder="Descrição do passo"
-                        {...form.register(`instructions.${index}.description`)}
-                      />
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="mt-6 text-muted-foreground hover:text-destructive"
-                      onClick={() => remove(index)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() =>
-                    append({ step_order: fields.length + 1, description: "" })
-                  }
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Adicionar Passo
-                </Button>
               </CardContent>
             </Card>
 

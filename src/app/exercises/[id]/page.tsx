@@ -3,6 +3,8 @@
 import { useParams, useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { useExercise, useDeleteExercise } from "@/hooks/use-exercises";
+import { useMuscleGroupList } from "@/hooks/use-muscle-groups";
+import { useMovementGroupList } from "@/hooks/use-movement-groups";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -28,8 +30,6 @@ import {
   Dumbbell,
   Bone,
   Move3d,
-  Wrench,
-  ListOrdered,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -48,8 +48,17 @@ export default function ExerciseDetailPage() {
   const id = params.id as string;
   const { data, isLoading } = useExercise(id);
   const deleteExercise = useDeleteExercise();
+  const { data: muscleGroups } = useMuscleGroupList({ per_page: 100 });
+  const { data: movementGroups } = useMovementGroupList({ per_page: 100 });
   const [deleteOpen, setDeleteOpen] = useState(false);
   const exercise = data?.data;
+
+  const muscleGroupName = muscleGroups?.data.find(
+    (mg) => mg.id === exercise?.muscle_group_id,
+  )?.name;
+  const movementGroupName = movementGroups?.data.find(
+    (mg) => mg.id === exercise?.movement_group_id,
+  )?.name;
 
   async function handleDelete() {
     try {
@@ -169,12 +178,6 @@ export default function ExerciseDetailPage() {
                   )}
                 </div>
               </div>
-              <div>
-                <span className="text-sm text-muted-foreground">Músculo Alvo</span>
-                <p className="text-foreground mt-1">
-                  {exercise.target_muscle_primary ?? "—"}
-                </p>
-              </div>
             </div>
 
             {exercise.description && (
@@ -211,7 +214,7 @@ export default function ExerciseDetailPage() {
                 <div className="flex items-center gap-2 mt-1">
                   <Bone className="h-4 w-4 text-muted-foreground" />
                   <span className="text-foreground">
-                    {exercise.muscle_group?.name ?? "—"}
+                    {muscleGroupName ?? exercise.muscle_group_id}
                   </span>
                 </div>
               </div>
@@ -220,60 +223,13 @@ export default function ExerciseDetailPage() {
                 <div className="flex items-center gap-2 mt-1">
                   <Move3d className="h-4 w-4 text-muted-foreground" />
                   <span className="text-foreground">
-                    {exercise.movement_group?.name ?? "—"}
+                    {movementGroupName ?? exercise.movement_group_id}
                   </span>
                 </div>
               </div>
             </div>
-
-            <div className="mt-4">
-              <span className="text-sm text-muted-foreground">Equipamentos</span>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {exercise.equipment_relations && exercise.equipment_relations.length > 0 ? (
-                  exercise.equipment_relations!.map((rel) => (
-                    <Badge
-                      key={rel.equipment_id}
-                      variant="secondary"
-                      className="flex items-center gap-1"
-                    >
-                      <Wrench className="h-3 w-3" />
-                      {rel.equipment_id}
-                    </Badge>
-                  ))
-                ) : (
-                  <span className="text-muted-foreground text-sm">Nenhum</span>
-                )}
-              </div>
-            </div>
           </CardContent>
         </Card>
-
-        {exercise.instructions && exercise.instructions.length > 0 && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ListOrdered className="h-5 w-5 text-primary" />
-                Instruções
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ol className="space-y-3">
-                {exercise.instructions
-                  .sort((a, b) => a.step_order - b.step_order)
-                  .map((instruction) => (
-                    <li key={instruction.id} className="flex gap-3">
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-medium">
-                        {instruction.step_order}
-                      </span>
-                      <p className="text-foreground pt-0.5">
-                        {instruction.description}
-                      </p>
-                    </li>
-                  ))}
-              </ol>
-            </CardContent>
-          </Card>
-        )}
 
         {(exercise.thumbnail_url || exercise.image_url || exercise.gif_url || exercise.video_url) && (
           <Card>

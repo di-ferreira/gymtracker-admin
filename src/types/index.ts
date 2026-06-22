@@ -43,7 +43,7 @@ export interface AdminUpdateUserRequest {
 export interface MuscleGroup {
   id: string;
   name: string;
-  slug: string;
+  slug?: string;
   description: string | null;
   order_index: number;
   created_at: string;
@@ -67,7 +67,7 @@ export interface MuscleGroupUpdate {
 export interface MovementGroup {
   id: string;
   name: string;
-  slug: string;
+  slug?: string;
   description: string | null;
   order_index: number;
   created_at: string;
@@ -91,11 +91,11 @@ export interface MovementGroupUpdate {
 export interface Equipment {
   id: string;
   name: string;
-  slug: string;
+  slug?: string;
   description: string | null;
   category: string | null;
   order_index: number;
-  deleted_at: string | null;
+  deleted_at?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -142,11 +142,9 @@ export interface Exercise {
 
 export interface ExerciseCreate {
   name: string;
-  slug?: string;
   description?: string;
   execution_tips?: string;
   difficulty?: DifficultyLevel;
-  target_muscle_primary?: string;
   thumbnail_url?: string;
   image_url?: string;
   gif_url?: string;
@@ -161,13 +159,10 @@ export interface ExerciseUpdate {
   description?: string;
   execution_tips?: string;
   difficulty?: DifficultyLevel;
-  target_muscle_primary?: string;
   thumbnail_url?: string;
   image_url?: string;
   gif_url?: string;
   video_url?: string;
-  movement_group_id?: string;
-  muscle_group_id?: string;
 }
 
 export interface ExerciseEquipment {
