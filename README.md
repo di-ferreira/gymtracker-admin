@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GymTracker Admin
 
-## Getting Started
+Painel administrativo para gerenciamento do catálogo de exercícios do GymTracker.
 
-First, run the development server:
+## Stack
+
+- **Framework:** Next.js 16.2.9 (App Router)
+- **Linguagem:** TypeScript
+- **UI:** TailwindCSS v4 + Shadcn UI (Base UI)
+- **Formulários:** react-hook-form + Zod v4
+- **Requisições:** Axios + TanStack Query
+- **Testes:** Playwright (integração com mocks)
+
+## Funcionalidades
+
+| Página | Descrição |
+|--------|-----------|
+| **Dashboard** | Métricas em tempo real (exercícios, equipamentos, grupos, substituições) |
+| **Exercícios** | CRUD com busca, paginação, step builder de instruções, vínculo multi-equipamento |
+| **Equipamentos** | CRUD inline com diálogos |
+| **Grupos Musculares** | CRUD inline com diálogos |
+| **Grupos de Movimento** | CRUD inline com diálogos |
+| **Substituições** | Gerenciar exercícios alternativos por grupo muscular |
+| **Mídia** | Biblioteca com grid, filtro por tipo, preview modal |
+| **Versão do Catálogo** | Publicação com bump semântico (major/minor) e histórico |
+
+## Começando
 
 ```bash
+# instalar dependências
+npm install
+
+# configurar variável de ambiente
+cp .env.example .env.local
+
+# iniciar dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Estrutura
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/          # Rotas (App Router)
+├── components/   # Componentes compartilhados (Sidebar, Topbar, Layout)
+├── features/     # Módulos por domínio
+├── hooks/        # Custom hooks (CRUD factory)
+├── lib/          # Axios client, schemas Zod, providers
+├── services/     # Camada de API (factory + serviços por entidade)
+└── types/        # Interfaces TypeScript
+```
 
-## Learn More
+## Testes
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+# executar todos os testes (inicia dev server automaticamente)
+npx playwright test
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# modo UI interativo
+npx playwright test --ui
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# relatório HTML
+npx playwright show-report
+```
 
-## Deploy on Vercel
+Os testes usam `page.route()` para mockar a API — não dependem de backend.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scripts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Comando | Descrição |
+|---------|-----------|
+| `npm run dev` | Dev server |
+| `npm run build` | Build de produção |
+| `npm run lint` | Lint (ESLint + Next) |
+| `npx playwright test` | Testes de integração |
