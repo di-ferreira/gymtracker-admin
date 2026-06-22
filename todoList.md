@@ -60,26 +60,23 @@
 - [x] Modal de delete com confirmação
 
 ## Fase 5 — CRUD de Entidades de Suporte
-- [ ] **Equipamentos** (`/equipment`):
-  - Lista, Create, Edit, Delete
-  - Campos: nome, slug, ícone
-- [ ] **Grupos Musculares** (`/muscle-groups`):
-  - Lista, Create, Edit, Delete
-  - Campos: nome, slug, descrição
-- [ ] **Grupos de Movimento** (`/movement-groups`):
-  - Lista, Create, Edit, Delete
-  - Campos: nome, slug, descrição
+- [x] **Equipamentos** (`/equipment`):
+  - Lista, Create, Edit, Delete (diálogos inline)
+- [x] **Grupos Musculares** (`/muscle-groups`):
+  - Lista, Create, Edit, Delete (diálogos inline)
+- [x] **Grupos de Movimento** (`/movement-groups`):
+  - Lista, Create, Edit, Delete (diálogos inline)
 
 ## Fase 6 — Relacionamentos & Mídias
-- [ ] Página **Alternative Exercises** (`/alternatives`):
-  - Selecionar exercício principal
+- [x] Página **Alternative Exercises** (`/alternatives`):
+  - Selecionar exercício principal (sidebar com search)
   - Adicionar/remover substituições (relação n:n)
-  - Visualização em tabela ou chips
-- [ ] Página **Media Library** (`/media`):
+  - Visualização em cards com motivo
+- [x] Página **Media Library** (`/media`):
   - Grid de mídias com preview
-  - Upload bulk
-  - Filtro por tipo (GIF, vídeo, imagem)
-- [ ] Modal de preview de mídia (zoom, metadados)
+  - Upload de arquivo com detecção automática de tipo
+  - Filtro por tipo (imagem, GIF, vídeo)
+- [x] Modal de preview de mídia (imagem/vídeo em tela cheia)
 
 ## Fase 7 — Dashboard
 - [ ] Página **Dashboard** (`/`):
