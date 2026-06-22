@@ -11,40 +11,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Dumbbell, Bone, Wrench, Shuffle } from "lucide-react";
 import Link from "next/link";
 
-const metrics = [
-  {
-    label: "Total de Exercícios",
-    icon: Dumbbell,
-    href: "/exercises",
-    useHook: () => useExerciseList({ per_page: 1 }),
-    color: "text-primary",
-  },
-  {
-    label: "Grupos Musculares",
-    icon: Bone,
-    href: "/muscle-groups",
-    useHook: () => useMuscleGroupList({ per_page: 1 }),
-    color: "text-green-500",
-  },
-  {
-    label: "Equipamentos",
-    icon: Wrench,
-    href: "/equipment",
-    useHook: () => useEquipmentList({ per_page: 1 }),
-    color: "text-blue-500",
-  },
-  {
-    label: "Substituições",
-    icon: Shuffle,
-    href: "/alternatives",
-    useHook: () => useQuery({
-      queryKey: ["substitutions", "count"],
-      queryFn: () => substitutionService.list(),
-    }),
-    color: "text-yellow-500",
-  },
-];
-
 function MetricCard({
   label,
   icon: Icon,

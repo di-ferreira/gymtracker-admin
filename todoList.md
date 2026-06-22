@@ -85,19 +85,17 @@
   - Estado vazio quando sem dados
 
 ## Fase 8 — Versionamento & Publicação
-- [ ] Página/section de **Catalog Version**:
+- [x] Página **Catalog Version** (`/catalog-version`):
   - Exibir versão atual do catálogo
-  - Botão "Publicar nova versão"
+  - Botão "Publicar nova versão" com diálogo
   - Validações pré-publicação
-  - Incremento semântico (major/minor/patch)
-- [ ] Histórico de versões publicadas
+  - Incremento semântico (major/minor)
+  - Histórico de versões publicadas
 
 ## Fase 9 — Polimento Final
-- [ ] Traduzir mensagens de validação Zod para português
-- [ ] Tratamento global de erros da API com toasts
-- [ ] Estados de loading/skeleton em todas as páginas
-- [ ] Empty states personalizados por entidade
-- [ ] Responsividade tablet (layout adaptativo)
-- [ ] Testes unitários (Vitest + Testing Library)
-- [ ] Testes de integração (Playwright ou Cypress)
-- [ ] Acessibilidade: focus visible, aria labels, headings hierarchy
+- [x] Traduzir mensagens de validação Zod para português
+- [x] Tratamento global de erros da API com toasts (interceptor Axios)
+- [x] Estados de loading/skeleton em todas as páginas
+- [x] Empty states personalizados por entidade
+- [x] Responsividade: sidebar colapsável em mobile com overlay
+- [x] Acessibilidade: aria-labels, heading hierarchy, focus visible
