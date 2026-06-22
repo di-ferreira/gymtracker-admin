@@ -135,6 +135,17 @@
 - [x] Adicionar "Sair" no sidebar
 - [x] Wrap root layout com AuthProvider
 
+## Fase 13 — Gestão de Usuários
+
+- [x] Criar user service (GET /admin/users/, PATCH /admin/users/{id})
+- [x] Criar user hooks (useUserList, useUpdateUser)
+- [x] Página /users: tabela com nome, email, função, status
+- [x] Diálogo inline de edição (nome, role, is_active)
+- [x] Schema Zod userEditSchema
+- [x] Adicionar "Usuários" no sidebar (seção Sistema)
+- [x] Testes Playwright (listar, editar nome, alternar status)
+- [x] Instalar componente Switch do Shadcn
+
 ## Fase 12 — Integração com API Real
 
 - [x] Ajustar tipos (slug opcional Equipment/MuscleGroup/MovementGroup)
@@ -143,4 +154,8 @@
 - [x] Buscar nomes via lookup maps para exibir muscle_group/movement_group no list e detail
 - [x] Transformar página de mídia em upload-only (API não tem endpoint de listagem)
 - [x] Verificar endpoints: substituições e versão não existem na API — páginas mantidas com empty state
+- [x] Atualizar rotas de substituições para nested /exercises/{id}/alternatives/
+- [x] Adicionar setupAuth helper (cookie gymtracker_token + mock /auth/me) nos testes
+- [x] Corrigir mocks para retornar arrays planos (formato real da API)
+- [x] Corrigir testes de substituições (3 testes: listar, adicionar, remover)
 - [ ] Testar CRUD completo com API rodando

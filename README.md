@@ -67,6 +67,8 @@ npx playwright show-report
 ```
 
 Os testes usam `page.route()` para mockar a API — não dependem de backend.
+`setupAuth()` em `e2e/mocks.ts` define o cookie `gymtracker_token` e mocka `/auth/me`
+para bypassar o proxy de autenticação.
 
 ## Scripts
 
