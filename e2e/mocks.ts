@@ -83,7 +83,22 @@ export const mockCatalogVersion = {
   updated_at: "2025-06-01T00:00:00Z",
 };
 
+export async function setupAuth(page: Page) {
+  await page.context().addCookies([
+    { name: "gymtracker_token", value: "fake-test-token", url: "http://localhost:3000" },
+  ]);
+  await page.route("**/api/v1/auth/me", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(mockUsers[0]),
+    });
+  });
+}
+
 export async function setupApiMocks(page: Page) {
+  await setupAuth(page);
+
   await page.route("**/api/v1/admin/catalog/exercises/", async (route) => {
     const url = new URL(route.request().url());
     const search = url.searchParams.get("search")?.toLowerCase();
@@ -93,7 +108,7 @@ export async function setupApiMocks(page: Page) {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ data: filtered, total: filtered.length, page: 1, per_page: 20, total_pages: 1 }),
+      body: JSON.stringify(filtered),
     });
   });
 
@@ -101,7 +116,7 @@ export async function setupApiMocks(page: Page) {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ data: mockExercises[0] }),
+      body: JSON.stringify(mockExercises[0]),
     });
   });
 
@@ -114,7 +129,7 @@ export async function setupApiMocks(page: Page) {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ data: filtered, total: filtered.length, page: 1, per_page: 100, total_pages: 1 }),
+      body: JSON.stringify(filtered),
     });
   });
 
@@ -122,7 +137,7 @@ export async function setupApiMocks(page: Page) {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ data: mockMuscleGroups, total: mockMuscleGroups.length, page: 1, per_page: 100, total_pages: 1 }),
+      body: JSON.stringify(mockMuscleGroups),
     });
   });
 
@@ -130,11 +145,15 @@ export async function setupApiMocks(page: Page) {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ data: mockMovementGroups, total: mockMovementGroups.length, page: 1, per_page: 100, total_pages: 1 }),
+      body: JSON.stringify(mockMovementGroups),
     });
   });
 
   await page.route("**/admin/catalog/exercises/*/alternatives/", async (route) => {
+    if (route.request().method() !== "GET") {
+      await route.fallback();
+      return;
+    }
     const url = new URL(route.request().url());
     const pathParts = url.pathname.split("/");
     const exerciseIdx = pathParts.indexOf("exercises") + 1;
@@ -154,7 +173,7 @@ export async function setupApiMocks(page: Page) {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ data: filtered }),
+      body: JSON.stringify(filtered),
     });
   });
 
@@ -162,7 +181,7 @@ export async function setupApiMocks(page: Page) {
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ data: mockUsers, total: mockUsers.length, page: 1, per_page: 100, total_pages: 1 }),
+      body: JSON.stringify(mockUsers),
     });
   });
 
