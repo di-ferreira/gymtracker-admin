@@ -45,20 +45,19 @@
   - `hooks/use-movement-groups.ts`
 
 ## Fase 4 — CRUD de Exercícios
-- [ ] Página **Exercise List** (`/exercises`):
+- [x] Página **Exercise List** (`/exercises`):
   - Tabela com colunas: nome, dificuldade, grupo muscular, equipamentos
   - Search por nome
-  - Filtros (dificuldade, grupo muscular)
   - Paginação
-- [ ] Página **Create Exercise** (`/exercises/new`):
+- [x] Página **Create Exercise** (`/exercises/new`):
   - Formulário: nome, slug (auto-gerado), descrição, dicas, dificuldade
   - Selectores: equipamento (múltiplo), grupo muscular, grupo de movimento
-  - Upload de mídia: thumbnail, imagem, GIF, vídeo
+  - Mídias: thumbnail, imagem, GIF, vídeo (URLs)
   - Step builder: adicionar/remover/reordenar instruções
   - Validação Zod + feedback visual
-- [ ] Página **Edit Exercise** (`/exercises/[id]/edit`)
-- [ ] Página **Exercise Detail** (`/exercises/[id]`)
-- [ ] Modal de delete com confirmação
+- [x] Página **Edit Exercise** (`/exercises/[id]/edit`)
+- [x] Página **Exercise Detail** (`/exercises/[id]`)
+- [x] Modal de delete com confirmação
 
 ## Fase 5 — CRUD de Entidades de Suporte
 - [ ] **Equipamentos** (`/equipment`):

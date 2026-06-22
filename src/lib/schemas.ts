@@ -15,7 +15,7 @@ export const exerciseSchema = z.object({
   video_url: z.string().url("URL inválida").optional().or(z.literal("")),
   movement_group_id: z.string().uuid("Grupo de movimento inválido"),
   muscle_group_id: z.string().uuid("Grupo muscular inválido"),
-  equipment_ids: z.array(z.string().uuid()).optional().default([]),
+  equipment_ids: z.array(z.string().uuid()).default([]),
   instructions: z
     .array(
       z.object({
@@ -24,11 +24,10 @@ export const exerciseSchema = z.object({
         image_url: z.string().optional().nullable(),
       }),
     )
-    .optional()
     .default([]),
 });
 
-export type ExerciseFormData = z.infer<typeof exerciseSchema>;
+export type ExerciseFormData = z.input<typeof exerciseSchema>;
 
 export const equipmentSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").max(255, "Máximo de 255 caracteres"),
