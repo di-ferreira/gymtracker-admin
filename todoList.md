@@ -26,18 +26,23 @@
   - Toaster + TooltipProvider no root layout
 
 ## Fase 3 — Infraestrutura de Dados
-- [ ] Criar types/entities adicionais (`ApiResponse<T>`, `PaginatedResponse<T>`)
-- [ ] Criar schemas Zod para cada formulário:
-  - `exerciseSchema`, `equipmentSchema`, `muscleGroupSchema`, `movementGroupSchema`
-- [ ] Criar service layer (Axios):
+- [x] Criar types/entities adicionais (`ApiResponse<T>`, `PaginatedResponse<T>`)
+- [x] Criar schemas Zod para cada formulário:
+  - `exerciseSchema`, `equipmentSchema`, `muscleGroupSchema`, `movementGroupSchema`, `substitutionSchema`
+- [x] Criar service layer (Axios):
+  - `services/base.ts` — factory `createService` com list/get/create/update/remove
   - `services/exercise.service.ts`
   - `services/equipment.service.ts`
   - `services/muscle-group.service.ts`
   - `services/movement-group.service.ts`
   - `services/media.service.ts`
   - `services/substitution.service.ts`
-- [ ] Criar factories TanStack Query:
-  - `useList`, `useGet`, `useCreate`, `useUpdate`, `useDelete` para cada entidade
+- [x] Criar factories TanStack Query:
+  - `hooks/use-crud.ts` — factory `createCrudHooks`
+  - `hooks/use-exercises.ts`
+  - `hooks/use-equipment.ts`
+  - `hooks/use-muscle-groups.ts`
+  - `hooks/use-movement-groups.ts`
 
 ## Fase 4 — CRUD de Exercícios
 - [ ] Página **Exercise List** (`/exercises`):
