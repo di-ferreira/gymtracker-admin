@@ -1,53 +1,32 @@
 # GymTracker Admin — Todo List
 
 ## Fase 1 — Setup do Projeto
-- [ ] Inicializar Next.js 15 + React 19 + TypeScript com TailwindCSS
-- [ ] Configurar Shadcn UI com tema customizado dark
-- [ ] Estruturar pastas feature-based:
-  ```
-  src/
-  ├── app/          (rotas Next.js App Router)
-  ├── components/   (componentes globais reutilizáveis)
-  ├── features/     (módulos por domínio)
-  ├── hooks/        (hooks genéricos)
-  ├── services/     (camada de API)
-  ├── lib/          (utilitários)
-  └── types/        (type definitions)
-  ```
-- [ ] Configurar Axios client + interceptors
-- [ ] Configurar TanStack Query Provider no layout root
-- [ ] Configurar React Hook Form + Zod (schemas base)
-- [ ] Configurar ESLint + Prettier
+- [x] Inicializar Next.js 15 + React 19 + TypeScript com TailwindCSS
+- [x] Configurar Shadcn UI com tema customizado dark
+- [x] Estruturar pastas feature-based
+- [x] Configurar Axios client + interceptors
+- [x] Configurar TanStack Query Provider no layout root
+- [x] Configurar React Hook Form + Zod (schemas base)
+- [x] Configurar ESLint + Prettier
 
 ## Fase 2 — Design System & Tokens
-- [ ] Extrair tokens do `design-system/`:
-  - Cores (bg, surface, primary, text, success, warning, error)
-  - Tipografia (Inter, scale)
-  - Spacing (4-8-12-16-24-32-48-64)
-  - Border radius
-  - Elevation/shadows
-  - Motion duration & easing
-- [ ] Implementar `tailwind.config.ts` com os tokens customizados
-- [ ] Criar `globals.css` com variáveis CSS
-- [ ] Build de componentes base do Shadcn com tema:
-  - Button (variants: primary, secondary, ghost, destructive)
-  - Input, Textarea, Select
-  - Card, Table
-  - Dialog/Modal, Drawer
-  - Tabs, Chips/Badge
-  - Toast/Sonner
-  - Skeleton (loading states)
-  - Empty State
-- [ ] Implementar layout shell:
-  - Sidebar (navegação colapsável)
-  - Topbar (breadcrumb + ações)
-  - Content Area responsivo
+- [x] Extrair tokens do `design-system/` (cores, tipografia, spacing, radius, shadows, motion)
+- [x] Implementar `globals.css` com variáveis CSS do tema dark GymTracker
+- [x] Build de componentes base do Shadcn:
+  - Button, Input, Textarea, Select, Card, Table
+  - Dialog, Drawer, Sheet
+  - Tabs, Badge
+  - Sonner (Toast)
+  - Skeleton, Separator
+  - Dropdown Menu, Avatar, Tooltip
+- [x] Implementar layout shell:
+  - Sidebar com navegação por seções
+  - Topbar
+  - DashboardLayout wrapper
+  - Toaster + TooltipProvider no root layout
 
 ## Fase 3 — Infraestrutura de Dados
-- [ ] Criar types/entities:
-  - `Exercise`, `Equipment`, `MuscleGroup`, `MovementGroup`
-  - `Media`, `Substitution`, `Instruction`
-  - `ApiResponse<T>`, `PaginatedResponse<T>`
+- [ ] Criar types/entities adicionais (`ApiResponse<T>`, `PaginatedResponse<T>`)
 - [ ] Criar schemas Zod para cada formulário:
   - `exerciseSchema`, `equipmentSchema`, `muscleGroupSchema`, `movementGroupSchema`
 - [ ] Criar service layer (Axios):
@@ -100,22 +79,15 @@
 
 ## Fase 7 — Dashboard
 - [ ] Página **Dashboard** (`/`):
-  - Cards de métricas:
-    - Total de exercícios
-    - Total de grupos musculares
-    - Total de equipamentos
-    - Total de substituições
-  - Feed de atividade recente (últimas alterações)
+  - Cards de métricas
+  - Feed de atividade recente
   - Estado vazio quando sem dados
 
 ## Fase 8 — Versionamento & Publicação
 - [ ] Página/section de **Catalog Version**:
   - Exibir versão atual do catálogo
   - Botão "Publicar nova versão"
-  - Validações pré-publicação:
-    - Todos os exercícios têm mídia? (ao menos 1)
-    - Substituições referenciam exercícios válidos?
-    - Nenhum exercício sem grupo muscular?
+  - Validações pré-publicação
   - Incremento semântico (major/minor/patch)
 - [ ] Histórico de versões publicadas
 
