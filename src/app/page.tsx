@@ -51,12 +51,15 @@ export default function Dashboard() {
   const exerciseQuery = useExerciseList({ per_page: 1 });
   const muscleQuery = useMuscleGroupList({ per_page: 1 });
   const equipmentQuery = useEquipmentList({ per_page: 1 });
+  const { data: firstExercise } = useExerciseList({ per_page: 1 });
+  const firstExerciseId = firstExercise?.data?.[0]?.id;
   const substitutionQuery = useQuery({
-    queryKey: ["substitutions", "count"],
-    queryFn: () => substitutionService.list(),
+    queryKey: ["substitutions", "count", firstExerciseId],
+    queryFn: () => substitutionService.list(firstExerciseId!),
+    enabled: !!firstExerciseId,
   });
 
-  const allLoading = exerciseQuery.isLoading || muscleQuery.isLoading || equipmentQuery.isLoading || substitutionQuery.isLoading;
+  const allLoading = exerciseQuery.isLoading || muscleQuery.isLoading || equipmentQuery.isLoading || substitutionQuery.isLoading || !firstExerciseId;
   const isEmpty = !allLoading && (
     (exerciseQuery.data?.total ?? 0) === 0 &&
     (muscleQuery.data?.total ?? 0) === 0
@@ -103,7 +106,7 @@ export default function Dashboard() {
             label="Substituições"
             icon={Shuffle}
             href="/alternatives"
-            total={Array.isArray(substitutionQuery.data) ? substitutionQuery.data.length : substitutionQuery.data?.total ?? substitutionQuery.data?.data?.length}
+            total={substitutionQuery.data?.length ?? 0}
             isLoading={substitutionQuery.isLoading}
             color="text-yellow-500"
           />

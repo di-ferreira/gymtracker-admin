@@ -53,3 +53,13 @@ export const substitutionSchema = z.object({
 });
 
 export type SubstitutionFormData = z.infer<typeof substitutionSchema>;
+
+const userRoles = ["admin", "user"] as const;
+
+export const userEditSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório").max(255, "Máximo de 255 caracteres"),
+  role: z.enum(userRoles, { message: "Função inválida" }),
+  is_active: z.boolean(),
+});
+
+export type UserEditFormData = z.input<typeof userEditSchema>;

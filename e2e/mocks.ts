@@ -64,6 +64,12 @@ export const mockMedia = [
   { id: "med2", url: "https://example.com/exercise.mp4", type: "VIDEO", filename: "exercise.mp4", created_at: "" },
 ];
 
+export const mockUsers = [
+  { id: "u1", email: "admin@gymtracker.com", name: "Admin", role: "admin", is_active: true, created_at: "2025-01-01T00:00:00Z", updated_at: "2025-01-01T00:00:00Z" },
+  { id: "u2", email: "user@gymtracker.com", name: "João Usuário", role: "user", is_active: true, created_at: "2025-01-02T00:00:00Z", updated_at: "2025-01-02T00:00:00Z" },
+  { id: "u3", email: "inactive@gymtracker.com", name: "Inativo", role: "user", is_active: false, created_at: "2025-01-03T00:00:00Z", updated_at: "2025-01-03T00:00:00Z" },
+];
+
 export const mockCatalogVersion = {
   id: "v1",
   version_major: 1,
@@ -128,16 +134,16 @@ export async function setupApiMocks(page: Page) {
     });
   });
 
-  await page.route("**/api/v1/admin/catalog/exercise-alternatives/", async (route) => {
+  await page.route("**/admin/catalog/exercises/*/alternatives/", async (route) => {
     const url = new URL(route.request().url());
-    const exerciseId = url.searchParams.get("exercise_id");
-    const filtered = exerciseId
-      ? mockSubstitutions.filter((s) => s.exercise_id === exerciseId)
-      : mockSubstitutions;
+    const pathParts = url.pathname.split("/");
+    const exerciseIdx = pathParts.indexOf("exercises") + 1;
+    const exerciseId = pathParts[exerciseIdx];
+    const filtered = mockSubstitutions.filter((s) => s.exercise_id === exerciseId);
     await route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ data: filtered }),
+      body: JSON.stringify(filtered),
     });
   });
 
@@ -149,6 +155,14 @@ export async function setupApiMocks(page: Page) {
       status: 200,
       contentType: "application/json",
       body: JSON.stringify({ data: filtered }),
+    });
+  });
+
+  await page.route("**/api/v1/admin/users/", async (route) => {
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ data: mockUsers, total: mockUsers.length, page: 1, per_page: 100, total_pages: 1 }),
     });
   });
 

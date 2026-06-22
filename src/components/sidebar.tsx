@@ -13,6 +13,7 @@ import {
   Image,
   Package,
   LogOut,
+  Users,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,7 @@ const navItems = [
     label: "Sistema",
     items: [
       { href: "/catalog-version", label: "Versão do Catálogo", icon: Package },
+      { href: "/users", label: "Usuários", icon: Users },
     ],
   },
 ];

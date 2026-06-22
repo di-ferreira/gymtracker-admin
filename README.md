@@ -22,6 +22,7 @@ Painel administrativo para gerenciamento do catálogo de exercícios do GymTrack
 | **Grupos de Movimento** | CRUD inline com diálogos |
 | **Substituições** | Gerenciar exercícios alternativos por grupo muscular |
 | **Mídia** | Biblioteca com grid, filtro por tipo, preview modal |
+| **Usuários** | Listagem e edição inline de nome, função (admin/user) e status ativo/inativo |
 | **Versão do Catálogo** | Publicação com bump semântico (major/minor) e histórico |
 
 ## Começando

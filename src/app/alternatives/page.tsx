@@ -2,7 +2,7 @@
 
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { useExerciseList } from "@/hooks/use-exercises";
-import { substitutionService, type Substitution, type SubstitutionCreate } from "@/services/substitution.service";
+import { substitutionService, type AlternativeResponse, type AlternativeCreate } from "@/services/substitution.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -51,19 +51,20 @@ export default function AlternativesPage() {
 
   const { data: alternatives, isLoading } = useQuery({
     queryKey: ["substitutions", selectedExercise],
-    queryFn: () => substitutionService.list({ exercise_id: selectedExercise ?? undefined }),
+    queryFn: () => substitutionService.list(selectedExercise!),
     enabled: !!selectedExercise,
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => substitutionService.remove(id),
+    mutationFn: (alternativeId: string) =>
+      substitutionService.remove(selectedExercise!, alternativeId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["substitutions"] });
       toast.success("Substituição removida");
     },
   });
 
-  const alternativesList: Substitution[] = alternatives?.data ?? alternatives ?? [];
+  const alternativesList: AlternativeResponse[] = alternatives ?? [];
 
   return (
     <DashboardLayout>
@@ -214,7 +215,8 @@ function CreateSubstitutionDialog({
   const [note, setNote] = useState("");
 
   const createMutation = useMutation({
-    mutationFn: (data: SubstitutionCreate) => substitutionService.create(data),
+    mutationFn: (data: AlternativeCreate) =>
+      substitutionService.create(exerciseId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["substitutions"] });
       toast.success("Substituição adicionada");
@@ -231,7 +233,6 @@ function CreateSubstitutionDialog({
     e.preventDefault();
     if (!alternativeId) return;
     createMutation.mutate({
-      exercise_id: exerciseId,
       alternative_exercise_id: alternativeId,
       reason: reason || null,
       note: note || null,

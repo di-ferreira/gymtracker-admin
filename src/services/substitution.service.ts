@@ -1,8 +1,9 @@
 import api from "@/lib/api";
+import type { ApiResponse } from "@/types";
 
-const endpoint = "/admin/catalog/exercise-alternatives";
+const endpoint = "/admin/catalog/exercises";
 
-export interface Substitution {
+export interface AlternativeResponse {
   id: string;
   exercise_id: string;
   alternative_exercise_id: string;
@@ -12,20 +13,19 @@ export interface Substitution {
   updated_at: string;
 }
 
-export interface SubstitutionCreate {
-  exercise_id: string;
+export interface AlternativeCreate {
   alternative_exercise_id: string;
   reason?: string | null;
   note?: string | null;
 }
 
 export const substitutionService = {
-  list: (params?: { exercise_id?: string }) =>
-    api.get(`${endpoint}/`, { params }).then((r) => r.data),
+  list: (exerciseId: string) =>
+    api.get<AlternativeResponse[]>(`${endpoint}/${exerciseId}/alternatives/`).then((r) => r.data),
 
-  create: (data: SubstitutionCreate) =>
-    api.post(`${endpoint}/`, data).then((r) => r.data),
+  create: (exerciseId: string, data: AlternativeCreate) =>
+    api.post<AlternativeResponse>(`${endpoint}/${exerciseId}/alternatives/`, data).then((r) => r.data),
 
-  remove: (id: string) =>
-    api.delete(`${endpoint}/${id}`).then(() => undefined),
+  remove: (exerciseId: string, alternativeId: string) =>
+    api.delete(`${endpoint}/${exerciseId}/alternatives/${alternativeId}`).then(() => undefined),
 };
