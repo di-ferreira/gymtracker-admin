@@ -37,7 +37,7 @@ export const equipmentSchema = z.object({
   order_index: z.number().int().min(0).optional().default(0),
 });
 
-export type EquipmentFormData = z.infer<typeof equipmentSchema>;
+export type EquipmentFormData = z.input<typeof equipmentSchema>;
 
 export const muscleGroupSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").max(255, "Máximo de 255 caracteres"),
@@ -46,7 +46,7 @@ export const muscleGroupSchema = z.object({
   order_index: z.number().int().min(0).optional().default(0),
 });
 
-export type MuscleGroupFormData = z.infer<typeof muscleGroupSchema>;
+export type MuscleGroupFormData = z.input<typeof muscleGroupSchema>;
 
 export const movementGroupSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").max(255, "Máximo de 255 caracteres"),
@@ -55,7 +55,7 @@ export const movementGroupSchema = z.object({
   order_index: z.number().int().min(0).optional().default(0),
 });
 
-export type MovementGroupFormData = z.infer<typeof movementGroupSchema>;
+export type MovementGroupFormData = z.input<typeof movementGroupSchema>;
 
 export const substitutionSchema = z.object({
   exercise_id: z.string().uuid("Exercício principal inválido"),
