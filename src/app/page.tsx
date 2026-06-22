@@ -1,6 +1,101 @@
-import { DashboardLayout } from "@/components/dashboard-layout";
+"use client";
 
-export default function Home() {
+import { DashboardLayout } from "@/components/dashboard-layout";
+import { useExerciseList } from "@/hooks/use-exercises";
+import { useMuscleGroupList } from "@/hooks/use-muscle-groups";
+import { useEquipmentList } from "@/hooks/use-equipment";
+import { substitutionService } from "@/services/substitution.service";
+import { useQuery } from "@tanstack/react-query";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Dumbbell, Bone, Wrench, Shuffle } from "lucide-react";
+import Link from "next/link";
+
+const metrics = [
+  {
+    label: "Total de Exercícios",
+    icon: Dumbbell,
+    href: "/exercises",
+    useHook: () => useExerciseList({ per_page: 1 }),
+    color: "text-primary",
+  },
+  {
+    label: "Grupos Musculares",
+    icon: Bone,
+    href: "/muscle-groups",
+    useHook: () => useMuscleGroupList({ per_page: 1 }),
+    color: "text-green-500",
+  },
+  {
+    label: "Equipamentos",
+    icon: Wrench,
+    href: "/equipment",
+    useHook: () => useEquipmentList({ per_page: 1 }),
+    color: "text-blue-500",
+  },
+  {
+    label: "Substituições",
+    icon: Shuffle,
+    href: "/alternatives",
+    useHook: () => useQuery({
+      queryKey: ["substitutions", "count"],
+      queryFn: () => substitutionService.list(),
+    }),
+    color: "text-yellow-500",
+  },
+];
+
+function MetricCard({
+  label,
+  icon: Icon,
+  href,
+  total,
+  isLoading,
+  color,
+}: {
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  href: string;
+  total: number | undefined;
+  isLoading: boolean;
+  color: string;
+}) {
+  return (
+    <Link href={href}>
+      <Card className="hover:bg-accent/50 transition-colors cursor-pointer">
+        <CardContent className="p-5">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">{label}</p>
+            <Icon className={`h-5 w-5 ${color}`} />
+          </div>
+          {isLoading ? (
+            <Skeleton className="h-8 w-16 mt-2" />
+          ) : (
+            <p className="text-3xl font-bold mt-2 text-foreground">
+              {total ?? "—"}
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </Link>
+  );
+}
+
+export default function Dashboard() {
+  const exerciseQuery = useExerciseList({ per_page: 1 });
+  const muscleQuery = useMuscleGroupList({ per_page: 1 });
+  const equipmentQuery = useEquipmentList({ per_page: 1 });
+  const substitutionQuery = useQuery({
+    queryKey: ["substitutions", "count"],
+    queryFn: () => substitutionService.list(),
+  });
+
+  const allLoading = exerciseQuery.isLoading || muscleQuery.isLoading || equipmentQuery.isLoading || substitutionQuery.isLoading;
+  const isEmpty = !allLoading && (
+    (exerciseQuery.data?.total ?? 0) === 0 &&
+    (muscleQuery.data?.total ?? 0) === 0
+  );
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -14,31 +109,66 @@ export default function Home() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-lg border border-border bg-card p-5">
-            <p className="text-sm text-muted-foreground">Total de Exercícios</p>
-            <p className="text-3xl font-bold mt-1 text-foreground">—</p>
-          </div>
-          <div className="rounded-lg border border-border bg-card p-5">
-            <p className="text-sm text-muted-foreground">Grupos Musculares</p>
-            <p className="text-3xl font-bold mt-1 text-foreground">—</p>
-          </div>
-          <div className="rounded-lg border border-border bg-card p-5">
-            <p className="text-sm text-muted-foreground">Equipamentos</p>
-            <p className="text-3xl font-bold mt-1 text-foreground">—</p>
-          </div>
-          <div className="rounded-lg border border-border bg-card p-5">
-            <p className="text-sm text-muted-foreground">Substituições</p>
-            <p className="text-3xl font-bold mt-1 text-foreground">—</p>
-          </div>
+          <MetricCard
+            label="Total de Exercícios"
+            icon={Dumbbell}
+            href="/exercises"
+            total={exerciseQuery.data?.total}
+            isLoading={exerciseQuery.isLoading}
+            color="text-primary"
+          />
+          <MetricCard
+            label="Grupos Musculares"
+            icon={Bone}
+            href="/muscle-groups"
+            total={muscleQuery.data?.total}
+            isLoading={muscleQuery.isLoading}
+            color="text-green-500"
+          />
+          <MetricCard
+            label="Equipamentos"
+            icon={Wrench}
+            href="/equipment"
+            total={equipmentQuery.data?.total}
+            isLoading={equipmentQuery.isLoading}
+            color="text-blue-500"
+          />
+          <MetricCard
+            label="Substituições"
+            icon={Shuffle}
+            href="/alternatives"
+            total={Array.isArray(substitutionQuery.data) ? substitutionQuery.data.length : substitutionQuery.data?.total ?? substitutionQuery.data?.data?.length}
+            isLoading={substitutionQuery.isLoading}
+            color="text-yellow-500"
+          />
         </div>
 
-        <div className="rounded-lg border border-border bg-card p-8">
-          <div className="flex flex-col items-center justify-center text-center py-12">
-            <p className="text-muted-foreground text-sm">
-              Conecte-se à API para visualizar os dados do catálogo.
-            </p>
-          </div>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">Atividade Recente</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {allLoading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <Skeleton key={i} className="h-12 w-full" />
+                ))}
+              </div>
+            ) : isEmpty ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground text-sm">
+                  Nenhum dado encontrado. Conecte-se à API para visualizar as informações do catálogo.
+                </p>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-muted-foreground text-sm">
+                  Catálogo com dados prontos para gerenciamento.
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </DashboardLayout>
   );

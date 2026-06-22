@@ -79,9 +79,9 @@
 - [x] Modal de preview de mídia (imagem/vídeo em tela cheia)
 
 ## Fase 7 — Dashboard
-- [ ] Página **Dashboard** (`/`):
-  - Cards de métricas
-  - Feed de atividade recente
+- [x] Página **Dashboard** (`/`):
+  - Cards de métricas com dados reais da API (total exercises, muscle groups, equipment, substitutions)
+  - Loading skeleton
   - Estado vazio quando sem dados
 
 ## Fase 8 — Versionamento & Publicação
