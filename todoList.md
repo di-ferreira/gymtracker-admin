@@ -100,6 +100,26 @@
 - [x] Responsividade: sidebar colapsável em mobile com overlay
 - [x] Acessibilidade: aria-labels, heading hierarchy, focus visible
 
+## Fase 11 — Sistema de Login (Admin)
+- [x] Instalar js-cookie e @types/js-cookie
+- [x] Criar auth service (login, me)
+- [x] Criar AuthContext (cookie token, user state, login/logout)
+- [x] Criar /login com formulário + validação de admin
+- [x] Criar proxy.ts (proteção de rotas via cookie — Next.js 16)
+- [x] Atualizar Axios interceptor para usar cookie (js-cookie)
+- [x] Atualizar Topbar (nome real + Sair)
+- [x] Adicionar "Sair" no sidebar
+- [x] Wrap root layout com AuthProvider
+
+## Fase 12 — Integração com API Real
+- [ ] Ajustar tipos (slug opcional Equipment/MuscleGroup/MovementGroup)
+- [ ] Remover campos não aceitos dos schemas Zod
+- [ ] Ajustar formulários criar/editar exercício
+- [ ] Exibir IDs em vez de nomes aninhados no detalhe
+- [ ] Transformar página de mídia em upload-only
+- [ ] Verificar endpoints substituições e versão
+- [ ] Testar CRUD completo com API rodando
+
 ## Fase 10 — Testes de Integração (mockados)
 - [x] Configurar Playwright + chromium
 - [x] Mock API com `page.route()` — dados de exemplo em `e2e/mocks.ts`

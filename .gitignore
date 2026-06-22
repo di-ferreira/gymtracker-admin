@@ -45,3 +45,4 @@ next-env.d.ts
 
 # AI config
 CLAUDE.md
+playwright-report

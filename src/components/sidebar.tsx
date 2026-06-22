@@ -12,9 +12,11 @@ import {
   Move3d,
   Image,
   Package,
+  LogOut,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth-context";
 
 interface SidebarProps {
   open: boolean;
@@ -54,6 +56,7 @@ const navItems = [
 
 export function Sidebar({ open, onClose }: SidebarProps) {
   const pathname = usePathname();
+  const { logout } = useAuth();
 
   return (
     <>
@@ -139,10 +142,14 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           ))}
         </nav>
 
-        <div className="border-t border-border px-6 py-4">
-          <span className="text-xs text-muted-foreground">
-            GymTracker Admin v0.1
-          </span>
+        <div className="border-t border-border px-3 py-3">
+          <button
+            onClick={logout}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors hover:text-foreground hover:bg-accent"
+          >
+            <LogOut className="h-4 w-4" />
+            Sair
+          </button>
         </div>
       </aside>
     </>

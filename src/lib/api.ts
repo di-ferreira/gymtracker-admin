@@ -1,5 +1,8 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 import { toast } from "sonner";
+
+const TOKEN_KEY = "gymtracker_token";
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1",
@@ -11,7 +14,7 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("access_token");
+    const token = Cookies.get(TOKEN_KEY);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -37,10 +40,12 @@ api.interceptors.response.use(
     };
 
     if (status === 401) {
-      localStorage.removeItem("access_token");
+      Cookies.remove(TOKEN_KEY);
+      window.location.href = "/login";
+      return Promise.reject(error);
     }
 
-    if (status && status !== 401) {
+    if (status) {
       const message = error.response?.data?.detail ?? messages[status] ?? "Erro inesperado.";
       toast.error(message);
     }
