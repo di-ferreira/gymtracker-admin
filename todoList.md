@@ -159,3 +159,25 @@
 - [x] Corrigir mocks para retornar arrays planos (formato real da API)
 - [x] Corrigir testes de substituições (3 testes: listar, adicionar, remover)
 - [ ] Testar CRUD completo com API rodando
+
+## Fase 14 — Alinhamento com API v0.1.0
+
+- [ ] Ajustar tipos Exercise/Equipment/MuscleGroup/MovementGroup (remover slug, deleted_at, target_muscle_primary; adicionar equipment_ids)
+- [ ] Corrigir query params em base.ts (sort_by→order_by, sort_order→order_dir)
+- [ ] Remover métodos obsoletos: addEquipment/removeEquipment, media.list()
+- [ ] Remover Catalog Version (página, serviço, sidebar, testes)
+- [ ] Criar instruction.service.ts + use-instructions.ts
+- [ ] Adicionar step builder reordenável na página de detalhe do exercício
+- [ ] Adicionar multi-select de equipamentos nos formulários de criar/editar exercício
+- [ ] Corrigir ExerciseUpdate para incluir movement_group_id, muscle_group_id, equipment_ids
+
+## Fase 15 — Gestão de Treinos (Workouts)
+
+- [ ] Criar tipos Workout, WorkoutCreate, WorkoutUpdate, WorkoutExercise, etc.
+- [ ] Criar workout.service.ts (CRUD workouts + workout-exercises)
+- [ ] Criar hooks use-workouts.ts
+- [ ] Página /workouts: listar treinos com busca e filtro por usuário
+- [ ] Página /workouts/new: criar treino com nome, descrição, selecionar usuário
+- [ ] Página /workouts/[id]: detalhe do treino + gerenciar exercícios (add, remove, reorder)
+- [ ] Adicionar "Treinos" no sidebar
+- [ ] Testes Playwright para treinos

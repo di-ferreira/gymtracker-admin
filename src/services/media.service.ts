@@ -2,14 +2,6 @@ import api from "@/lib/api";
 
 const endpoint = "/admin/media";
 
-export interface MediaItem {
-  id: string;
-  url: string;
-  type: "THUMBNAIL" | "IMAGE" | "GIF" | "VIDEO";
-  filename: string;
-  created_at: string;
-}
-
 export interface MediaUploadResponse {
   url: string;
   filename: string;
@@ -17,9 +9,6 @@ export interface MediaUploadResponse {
 }
 
 export const mediaService = {
-  list: (params?: { type?: string; page?: number; per_page?: number }) =>
-    api.get(`${endpoint}/`).then((r) => r.data),
-
   upload: async (file: File, _type: string) => {
     const formData = new FormData();
     formData.append("file", file);

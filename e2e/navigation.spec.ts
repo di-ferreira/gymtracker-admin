@@ -1,10 +1,16 @@
 import { test, expect } from "@playwright/test";
-import { setupApiMocks, mockExercises } from "./mocks";
+import { setupApiMocks } from "./mocks";
 
 test.describe("Navegação", () => {
   test("navega entre todas as rotas via sidebar", async ({ page }) => {
     await setupApiMocks(page);
     await page.goto("/");
+
+    await page.getByRole("link", { name: /usuários/i }).click();
+    await expect(page).toHaveURL(/\/users/);
+
+    await page.getByRole("link", { name: /treinos/i }).click();
+    await expect(page).toHaveURL(/\/workouts/);
 
     await page.getByRole("link", { name: /exercícios/i }).click();
     await expect(page).toHaveURL(/\/exercises/);
@@ -22,12 +28,6 @@ test.describe("Navegação", () => {
 
     await page.getByRole("link", { name: /substituições/i }).click();
     await expect(page).toHaveURL(/\/alternatives/);
-
-    await page.getByRole("link", { name: /mídia/i }).click();
-    await expect(page).toHaveURL(/\/media/);
-
-    await page.getByRole("link", { name: /versão/i }).click();
-    await expect(page).toHaveURL(/\/catalog-version/);
   });
 
   test("sidebar recolhe e expande em mobile", async ({ page }) => {

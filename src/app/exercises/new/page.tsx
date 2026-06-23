@@ -4,6 +4,7 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 import { useCreateExercise } from "@/hooks/use-exercises";
 import { useMuscleGroupList } from "@/hooks/use-muscle-groups";
 import { useMovementGroupList } from "@/hooks/use-movement-groups";
+import { useEquipmentList } from "@/hooks/use-equipment";
 import { exerciseSchema, type ExerciseFormData } from "@/lib/schemas";
 import type { ExerciseCreate } from "@/types";
 import { useForm } from "react-hook-form";
@@ -29,7 +30,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Weight } from "lucide-react";
 import Link from "next/link";
 
 export default function CreateExercisePage() {
@@ -37,6 +38,7 @@ export default function CreateExercisePage() {
   const createExercise = useCreateExercise();
   const { data: muscleGroupData } = useMuscleGroupList({ per_page: 100 });
   const { data: movementGroupData } = useMovementGroupList({ per_page: 100 });
+  const { data: equipmentData } = useEquipmentList({ per_page: 100 });
 
   const form = useForm<ExerciseFormData>({
     resolver: zodResolver(exerciseSchema),
@@ -47,6 +49,7 @@ export default function CreateExercisePage() {
       difficulty: undefined,
       movement_group_id: "",
       muscle_group_id: "",
+      equipment_ids: [],
     },
   });
 
@@ -59,6 +62,7 @@ export default function CreateExercisePage() {
         difficulty: data.difficulty ?? undefined,
         movement_group_id: data.movement_group_id,
         muscle_group_id: data.muscle_group_id,
+        equipment_ids: data.equipment_ids && data.equipment_ids.length > 0 ? data.equipment_ids : undefined,
         thumbnail_url: data.thumbnail_url || undefined,
         image_url: data.image_url || undefined,
         gif_url: data.gif_url || undefined,
@@ -69,6 +73,17 @@ export default function CreateExercisePage() {
       router.push("/exercises");
     } catch {
       toast.error("Erro ao criar exercício");
+    }
+  }
+
+  const selectedIds = form.watch("equipment_ids") ?? [];
+
+  function toggleEquipment(id: string) {
+    const current = form.getValues("equipment_ids") ?? [];
+    if (current.includes(id)) {
+      form.setValue("equipment_ids", current.filter((eid) => eid !== id), { shouldValidate: true });
+    } else {
+      form.setValue("equipment_ids", [...current, id], { shouldValidate: true });
     }
   }
 
@@ -231,6 +246,43 @@ export default function CreateExercisePage() {
                     </FormItem>
                   )}
                 />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Weight className="h-5 w-5 text-primary" />
+                  Equipamentos
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {!equipmentData || equipmentData.data.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    Nenhum equipamento disponível
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    {equipmentData.data.map((eq) => (
+                      <label
+                        key={eq.id}
+                        className={`flex items-center gap-2 rounded-lg border p-3 cursor-pointer transition-colors ${
+                          selectedIds.includes(eq.id)
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:bg-accent"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedIds.includes(eq.id)}
+                          onChange={() => toggleEquipment(eq.id)}
+                          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                        />
+                        <span className="text-sm font-medium">{eq.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
 

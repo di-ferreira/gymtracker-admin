@@ -43,7 +43,6 @@ export interface AdminUpdateUserRequest {
 export interface MuscleGroup {
   id: string;
   name: string;
-  slug?: string;
   description: string | null;
   order_index: number;
   created_at: string;
@@ -52,14 +51,12 @@ export interface MuscleGroup {
 
 export interface MuscleGroupCreate {
   name: string;
-  slug?: string;
   description?: string;
   order_index?: number;
 }
 
 export interface MuscleGroupUpdate {
   name?: string;
-  slug?: string;
   description?: string;
   order_index?: number;
 }
@@ -67,7 +64,6 @@ export interface MuscleGroupUpdate {
 export interface MovementGroup {
   id: string;
   name: string;
-  slug?: string;
   description: string | null;
   order_index: number;
   created_at: string;
@@ -76,14 +72,12 @@ export interface MovementGroup {
 
 export interface MovementGroupCreate {
   name: string;
-  slug?: string;
   description?: string;
   order_index?: number;
 }
 
 export interface MovementGroupUpdate {
   name?: string;
-  slug?: string;
   description?: string;
   order_index?: number;
 }
@@ -91,18 +85,15 @@ export interface MovementGroupUpdate {
 export interface Equipment {
   id: string;
   name: string;
-  slug?: string;
-  description: string | null;
-  category: string | null;
+  description: string;
+  category: string;
   order_index: number;
-  deleted_at?: string | null;
   created_at: string;
   updated_at: string;
 }
 
 export interface EquipmentCreate {
   name: string;
-  slug?: string;
   description?: string;
   category?: string;
   order_index?: number;
@@ -110,7 +101,6 @@ export interface EquipmentCreate {
 
 export interface EquipmentUpdate {
   name?: string;
-  slug?: string;
   description?: string;
   category?: string;
   order_index?: number;
@@ -119,23 +109,17 @@ export interface EquipmentUpdate {
 export interface Exercise {
   id: string;
   name: string;
-  slug: string;
   description: string | null;
   execution_tips: string | null;
   difficulty: DifficultyLevel | null;
-  target_muscle_primary?: string | null;
   thumbnail_url: string | null;
   image_url: string | null;
   gif_url: string | null;
   video_url: string | null;
   movement_group_id: string;
   muscle_group_id: string;
-  movement_group?: MovementGroup;
-  muscle_group?: MuscleGroup;
-  equipment_relations?: ExerciseEquipment[];
+  equipment_ids?: string[];
   instructions?: ExerciseInstruction[];
-  alternatives?: ExerciseAlternative[];
-  deleted_at?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -151,11 +135,11 @@ export interface ExerciseCreate {
   video_url?: string;
   movement_group_id: string;
   muscle_group_id: string;
+  equipment_ids?: string[];
 }
 
 export interface ExerciseUpdate {
   name?: string;
-  slug?: string;
   description?: string;
   execution_tips?: string;
   difficulty?: DifficultyLevel;
@@ -163,12 +147,9 @@ export interface ExerciseUpdate {
   image_url?: string;
   gif_url?: string;
   video_url?: string;
-}
-
-export interface ExerciseEquipment {
-  exercise_id: string;
-  equipment_id: string;
-  usage_note: string | null;
+  movement_group_id?: string;
+  muscle_group_id?: string;
+  equipment_ids?: string[] | null;
 }
 
 export interface ExerciseInstruction {
@@ -179,6 +160,18 @@ export interface ExerciseInstruction {
   image_url: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface InstructionCreate {
+  description: string;
+  step_order?: number;
+  image_url?: string;
+}
+
+export interface InstructionUpdate {
+  description?: string;
+  step_order?: number;
+  image_url?: string;
 }
 
 export interface ExerciseAlternative {
@@ -204,15 +197,63 @@ export interface PaginatedResponse<T> {
   total_pages: number;
 }
 
-export interface CatalogVersion {
+export interface Workout {
   id: string;
-  version_major: number;
-  version_minor: number;
-  checksum: string;
-  status: string;
+  name: string;
   description: string | null;
-  checksum_algorithm: string;
-  sync_metadata: string | null;
+  user_id: string;
+  user?: User;
+  exercises?: WorkoutExercise[];
   created_at: string;
   updated_at: string;
+}
+
+export interface WorkoutCreate {
+  name: string;
+  description?: string;
+  user_id: string;
+}
+
+export interface WorkoutUpdate {
+  name?: string;
+  description?: string;
+  user_id?: string;
+}
+
+export interface WorkoutExercise {
+  id: string;
+  workout_id: string;
+  exercise_id: string;
+  exercise?: Exercise;
+  sets: number | null;
+  reps: number | null;
+  weight: number | null;
+  rest_seconds: number | null;
+  notes: string | null;
+  order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface WorkoutExerciseCreate {
+  exercise_id: string;
+  sets?: number;
+  reps?: number;
+  weight?: number;
+  rest_seconds?: number;
+  notes?: string;
+  order?: number;
+}
+
+export interface WorkoutExerciseUpdate {
+  sets?: number | null;
+  reps?: number | null;
+  weight?: number | null;
+  rest_seconds?: number | null;
+  notes?: string | null;
+  order?: number;
+}
+
+export interface WorkoutReorder {
+  exercise_ids: string[];
 }

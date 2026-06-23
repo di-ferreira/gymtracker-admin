@@ -82,7 +82,6 @@ export default function EquipmentPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Nome</TableHead>
-                <TableHead>Slug</TableHead>
                 <TableHead>Categoria</TableHead>
                 <TableHead>Ordem</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
@@ -92,14 +91,14 @@ export default function EquipmentPage() {
               {isLoading ? (
                 Array.from({ length: 3 }).map((_, i) => (
                   <TableRow key={i}>
-                    {Array.from({ length: 5 }).map((_, j) => (
+                    {Array.from({ length: 4 }).map((_, j) => (
                       <TableCell key={j}><Skeleton className="h-5 w-24" /></TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : data?.data.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
+                  <TableCell colSpan={4} className="text-center py-12 text-muted-foreground">
                     Nenhum equipamento cadastrado
                   </TableCell>
                 </TableRow>
@@ -107,8 +106,7 @@ export default function EquipmentPage() {
                 data?.data.map((eq) => (
                   <TableRow key={eq.id}>
                     <TableCell className="font-medium">{eq.name}</TableCell>
-                    <TableCell className="text-muted-foreground">{eq.slug}</TableCell>
-                    <TableCell className="text-muted-foreground">{eq.category ?? "—"}</TableCell>
+                    <TableCell className="text-muted-foreground">{eq.category}</TableCell>
                     <TableCell className="text-muted-foreground">{eq.order_index}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">
@@ -181,7 +179,7 @@ function CreateEquipmentDialog({
   const createEquipment = useCreateEquipment();
   const form = useForm<EquipmentFormData>({
     resolver: zodResolver(equipmentSchema),
-    defaultValues: { name: "", slug: "", description: "", category: "", order_index: 0 },
+    defaultValues: { name: "", description: "", category: "", order_index: 0 },
   });
 
   useEffect(() => { if (!open) form.reset(); }, [open, form]);
@@ -190,7 +188,6 @@ function CreateEquipmentDialog({
     try {
       const payload: EquipmentCreate = {
         name: data.name,
-        slug: data.slug || undefined,
         description: data.description || undefined,
         category: data.category || undefined,
         order_index: data.order_index ?? 0,
@@ -212,9 +209,6 @@ function CreateEquipmentDialog({
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField control={form.control} name="name" render={({ field }) => (
             <FormItem><FormLabel>Nome</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-          )} />
-          <FormField control={form.control} name="slug" render={({ field }) => (
-            <FormItem><FormLabel>Slug</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
           )} />
           <FormField control={form.control} name="description" render={({ field }) => (
             <FormItem><FormLabel>Descrição</FormLabel><FormControl><Textarea {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>
@@ -248,14 +242,13 @@ function EditEquipmentDialog({
   const equipment = data?.data;
   const form = useForm<EquipmentFormData>({
     resolver: zodResolver(equipmentSchema),
-    defaultValues: { name: "", slug: "", description: "", category: "", order_index: 0 },
+    defaultValues: { name: "", description: "", category: "", order_index: 0 },
   });
 
   useEffect(() => {
     if (equipment) {
       form.reset({
         name: equipment.name,
-        slug: equipment.slug,
         description: equipment.description ?? "",
         category: equipment.category ?? "",
         order_index: equipment.order_index,
@@ -267,7 +260,6 @@ function EditEquipmentDialog({
     try {
       const payload: EquipmentUpdate = {
         name: data.name,
-        slug: data.slug || undefined,
         description: data.description || undefined,
         category: data.category || undefined,
         order_index: data.order_index ?? 0,
@@ -289,9 +281,6 @@ function EditEquipmentDialog({
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField control={form.control} name="name" render={({ field }) => (
             <FormItem><FormLabel>Nome</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-          )} />
-          <FormField control={form.control} name="slug" render={({ field }) => (
-            <FormItem><FormLabel>Slug</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
           )} />
           <FormField control={form.control} name="description" render={({ field }) => (
             <FormItem><FormLabel>Descrição</FormLabel><FormControl><Textarea {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>

@@ -23,7 +23,7 @@ test.describe("Exercícios - CRUD", () => {
       if (request.method() === "POST") {
         createdBody = request.postDataJSON();
         await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({
-          data: { id: "e3", ...createdBody, slug: createdBody.name.toLowerCase().replace(/\s+/g, "-") },
+          data: { id: "e3", ...createdBody },
         })});
       } else {
         await route.fallback();
@@ -81,8 +81,9 @@ test.describe("Exercícios - CRUD", () => {
     });
 
     await page.goto("/exercises");
+    await page.getByRole("link", { name: "Supino Reto" }).click();
 
-    await page.getByRole("button", { name: /excluir/i }).first().click();
+    await page.getByRole("button", { name: /excluir/i }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await page.getByRole("button", { name: /confirmar/i }).click();
 

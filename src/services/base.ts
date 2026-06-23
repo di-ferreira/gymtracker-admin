@@ -18,8 +18,8 @@ function toApiParams(params?: QueryParams): Record<string, unknown> {
     apiParams.limit = params.per_page;
   }
   if (params.search) apiParams.search = params.search;
-  if (params.sort_by) apiParams.sort_by = params.sort_by;
-  if (params.sort_order) apiParams.sort_order = params.sort_order;
+  if (params.sort_by) apiParams.order_by = params.sort_by;
+  if (params.sort_order) apiParams.order_dir = params.sort_order;
   Object.entries(params).forEach(([k, v]) => {
     if (!["page", "per_page", "search", "sort_by", "sort_order"].includes(k)) {
       apiParams[k] = v;

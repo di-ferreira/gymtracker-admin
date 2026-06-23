@@ -13,13 +13,13 @@ export const exerciseSchema = z.object({
   video_url: z.string().url("URL inválida").optional().or(z.literal("")),
   movement_group_id: z.string().uuid("Grupo de movimento inválido"),
   muscle_group_id: z.string().uuid("Grupo muscular inválido"),
+  equipment_ids: z.array(z.string().uuid()).optional(),
 });
 
 export type ExerciseFormData = z.input<typeof exerciseSchema>;
 
 export const equipmentSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").max(255, "Máximo de 255 caracteres"),
-  slug: z.string().optional(),
   description: z.string().optional().nullable(),
   category: z.string().optional().nullable(),
   order_index: z.number().int().min(0).optional().default(0),
@@ -29,7 +29,6 @@ export type EquipmentFormData = z.input<typeof equipmentSchema>;
 
 export const muscleGroupSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").max(255, "Máximo de 255 caracteres"),
-  slug: z.string().optional(),
   description: z.string().optional().nullable(),
   order_index: z.number().int().min(0).optional().default(0),
 });
@@ -38,7 +37,6 @@ export type MuscleGroupFormData = z.input<typeof muscleGroupSchema>;
 
 export const movementGroupSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").max(255, "Máximo de 255 caracteres"),
-  slug: z.string().optional(),
   description: z.string().optional().nullable(),
   order_index: z.number().int().min(0).optional().default(0),
 });
@@ -63,3 +61,31 @@ export const userEditSchema = z.object({
 });
 
 export type UserEditFormData = z.input<typeof userEditSchema>;
+
+export const instructionSchema = z.object({
+  description: z.string().min(1, "Descrição é obrigatória"),
+  step_order: z.number().int().min(0).optional(),
+  image_url: z.string().url("URL inválida").optional().or(z.literal("")),
+});
+
+export type InstructionFormData = z.input<typeof instructionSchema>;
+
+export const workoutSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório").max(255, "Máximo de 255 caracteres"),
+  description: z.string().optional(),
+  user_id: z.string().uuid("Usuário inválido"),
+});
+
+export type WorkoutFormData = z.input<typeof workoutSchema>;
+
+export const workoutExerciseSchema = z.object({
+  exercise_id: z.string().uuid("Exercício inválido"),
+  sets: z.number().int().min(0).optional().nullable(),
+  reps: z.number().int().min(0).optional().nullable(),
+  weight: z.number().min(0).optional().nullable(),
+  rest_seconds: z.number().int().min(0).optional().nullable(),
+  notes: z.string().optional().nullable(),
+  order: z.number().int().min(0).optional(),
+});
+
+export type WorkoutExerciseFormData = z.input<typeof workoutExerciseSchema>;

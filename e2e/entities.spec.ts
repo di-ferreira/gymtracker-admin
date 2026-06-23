@@ -18,7 +18,7 @@ test.describe("Equipamentos - CRUD", () => {
       if (request.method() === "POST") {
         createdBody = request.postDataJSON();
         await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({
-          data: { id: "eq3", ...createdBody, slug: "kettlebell" },
+          data: { id: "eq3", ...createdBody },
         })});
       } else {
         await route.fallback();
@@ -69,7 +69,7 @@ test.describe("Grupos Musculares - CRUD", () => {
       if (request.method() === "POST") {
         createdBody = request.postDataJSON();
         await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({
-          data: { id: "m3", ...createdBody, slug: "quadriceps" },
+          data: { id: "m3", ...createdBody },
         })});
       } else {
         await route.fallback();
@@ -95,7 +95,7 @@ test.describe("Grupos de Movimento - CRUD", () => {
       if (request.method() === "POST") {
         createdBody = request.postDataJSON();
         await route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({
-          data: { id: "mg3", ...createdBody, slug: "agachar" },
+          data: { id: "mg3", ...createdBody },
         })});
       } else {
         await route.fallback();

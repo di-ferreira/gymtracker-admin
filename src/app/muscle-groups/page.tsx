@@ -76,7 +76,6 @@ export default function MuscleGroupsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Nome</TableHead>
-                <TableHead>Slug</TableHead>
                 <TableHead>Descrição</TableHead>
                 <TableHead>Ordem</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
@@ -86,14 +85,14 @@ export default function MuscleGroupsPage() {
               {isLoading ? (
                 Array.from({ length: 3 }).map((_, i) => (
                   <TableRow key={i}>
-                    {Array.from({ length: 5 }).map((_, j) => (
+                    {Array.from({ length: 4 }).map((_, j) => (
                       <TableCell key={j}><Skeleton className="h-5 w-20" /></TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : data?.data.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
+                  <TableCell colSpan={4} className="text-center py-12 text-muted-foreground">
                     Nenhum grupo muscular cadastrado
                   </TableCell>
                 </TableRow>
@@ -101,7 +100,6 @@ export default function MuscleGroupsPage() {
                 data?.data.map((mg) => (
                   <TableRow key={mg.id}>
                     <TableCell className="font-medium">{mg.name}</TableCell>
-                    <TableCell className="text-muted-foreground">{mg.slug}</TableCell>
                     <TableCell className="text-muted-foreground max-w-xs truncate">
                       {mg.description ?? "—"}
                     </TableCell>
@@ -151,11 +149,18 @@ export default function MuscleGroupsPage() {
 
 function CreateDialog({ onSuccess }: { open: boolean; onOpenChange: (o: boolean) => void; onSuccess: () => void }) {
   const create = useCreateMuscleGroup();
-  const form = useForm<MuscleGroupFormData>({ resolver: zodResolver(muscleGroupSchema), defaultValues: { name: "", slug: "", description: "", order_index: 0 } });
+  const form = useForm<MuscleGroupFormData>({
+    resolver: zodResolver(muscleGroupSchema),
+    defaultValues: { name: "", description: "", order_index: 0 },
+  });
 
   async function onSubmit(data: MuscleGroupFormData) {
     try {
-      const payload: MuscleGroupCreate = { name: data.name, slug: data.slug || undefined, description: data.description || undefined, order_index: data.order_index ?? 0 };
+      const payload: MuscleGroupCreate = {
+        name: data.name,
+        description: data.description || undefined,
+        order_index: data.order_index ?? 0,
+      };
       await create.mutateAsync(payload);
       toast.success("Grupo muscular criado");
       onSuccess();
@@ -169,8 +174,6 @@ function CreateDialog({ onSuccess }: { open: boolean; onOpenChange: (o: boolean)
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField control={form.control} name="name" render={({ field }) => (
             <FormItem><FormLabel>Nome</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-          <FormField control={form.control} name="slug" render={({ field }) => (
-            <FormItem><FormLabel>Slug</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
           <FormField control={form.control} name="description" render={({ field }) => (
             <FormItem><FormLabel>Descrição</FormLabel><FormControl><Textarea {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
           <DialogFooter>
@@ -186,13 +189,26 @@ function EditDialog({ id, onSuccess, onCancel }: { id: string; onSuccess: () => 
   const { data } = useMuscleGroup(id);
   const update = useUpdateMuscleGroup();
   const mg = data?.data;
-  const form = useForm<MuscleGroupFormData>({ resolver: zodResolver(muscleGroupSchema), defaultValues: { name: "", slug: "", description: "", order_index: 0 } });
+  const form = useForm<MuscleGroupFormData>({
+    resolver: zodResolver(muscleGroupSchema),
+    defaultValues: { name: "", description: "", order_index: 0 },
+  });
 
-  useEffect(() => { if (mg) form.reset({ name: mg.name, slug: mg.slug, description: mg.description ?? "", order_index: mg.order_index }); }, [mg, form]);
+  useEffect(() => {
+    if (mg) form.reset({
+      name: mg.name,
+      description: mg.description ?? "",
+      order_index: mg.order_index,
+    });
+  }, [mg, form]);
 
   async function onSubmit(data: MuscleGroupFormData) {
     try {
-      const payload: MuscleGroupUpdate = { name: data.name, slug: data.slug || undefined, description: data.description || undefined, order_index: data.order_index ?? 0 };
+      const payload: MuscleGroupUpdate = {
+        name: data.name,
+        description: data.description || undefined,
+        order_index: data.order_index ?? 0,
+      };
       await update.mutateAsync({ id, data: payload });
       toast.success("Grupo muscular atualizado");
       onSuccess();
@@ -205,7 +221,6 @@ function EditDialog({ id, onSuccess, onCancel }: { id: string; onSuccess: () => 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField control={form.control} name="name" render={({ field }) => (<FormItem><FormLabel>Nome</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
-          <FormField control={form.control} name="slug" render={({ field }) => (<FormItem><FormLabel>Slug</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>)} />
           <FormField control={form.control} name="description" render={({ field }) => (<FormItem><FormLabel>Descrição</FormLabel><FormControl><Textarea {...field} value={field.value ?? ""} /></FormControl><FormMessage /></FormItem>)} />
           <DialogFooter>
             <Button variant="outline" type="button" onClick={onCancel}>Cancelar</Button>
