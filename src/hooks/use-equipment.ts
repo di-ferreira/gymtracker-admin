@@ -1,5 +1,4 @@
 import { createCrudHooks } from "@/hooks/use-crud";
-import { equipmentService } from "@/services/equipment.service";
 import type { Equipment, EquipmentCreate, EquipmentUpdate } from "@/types";
 
 export const {
@@ -9,6 +8,6 @@ export const {
   useUpdate: useUpdateEquipment,
   useRemove: useDeleteEquipment,
 } = createCrudHooks<Equipment, EquipmentCreate, EquipmentUpdate>(
-  equipmentService,
+  "/admin/catalog/equipment",
   "equipment",
 );

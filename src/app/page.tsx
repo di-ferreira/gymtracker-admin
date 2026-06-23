@@ -4,7 +4,7 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 import { useExerciseList } from "@/hooks/use-exercises";
 import { useMuscleGroupList } from "@/hooks/use-muscle-groups";
 import { useEquipmentList } from "@/hooks/use-equipment";
-import { substitutionService } from "@/services/substitution.service";
+import { apiGet } from "@/actions/api.action";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -55,7 +55,7 @@ export default function Dashboard() {
   const firstExerciseId = firstExercise?.data?.[0]?.id;
   const substitutionQuery = useQuery({
     queryKey: ["substitutions", "count", firstExerciseId],
-    queryFn: () => substitutionService.list(firstExerciseId!),
+    queryFn: () => apiGet<any[]>(`/admin/catalog/exercises/${firstExerciseId!}/alternatives/`),
     enabled: !!firstExerciseId,
   });
 

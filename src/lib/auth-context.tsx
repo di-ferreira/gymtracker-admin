@@ -4,7 +4,6 @@ import { createContext, useContext, useState, useEffect, useCallback, type React
 import { useRouter } from "next/navigation";
 import { loginAction, meAction, logoutAction } from "@/actions/auth.actions";
 import { encryptPassword } from "@/lib/crypto";
-import { setToken } from "@/lib/token-store";
 import type { User } from "@/types";
 
 interface LoginParams {
@@ -33,7 +32,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       // best effort
     }
-    setToken(null);
     setUser(null);
     router.push("/login");
   }, [router]);
@@ -60,12 +58,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (data: LoginParams) => {
     const encryptedPassword = await encryptPassword(data.password);
-    const { token } = await loginAction(data.email, encryptedPassword);
-    setToken(token);
+    await loginAction(data.email, encryptedPassword);
 
     const u = await meAction();
     if (!u || u.role !== "admin") {
-      setToken(null);
       await logoutAction().catch(() => {});
       throw new Error("Acesso restrito a administradores.");
     }

@@ -1,24 +1,32 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { workoutService } from "@/services/workout.service";
-import type {
-  WorkoutCreate,
-  WorkoutUpdate,
-  WorkoutExerciseCreate,
-  WorkoutExerciseUpdate,
-} from "@/types";
-import type { QueryParams } from "@/services/base";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  apiList,
+  apiGetOne,
+  apiCreateOne,
+  apiUpdateOne,
+  apiRemoveOne,
+  apiGet,
+  apiPost,
+  apiPatch,
+  apiDelete,
+} from "@/actions/api.action";
+import type { Workout, WorkoutCreate, WorkoutUpdate, WorkoutExercise, WorkoutExerciseCreate, WorkoutExerciseUpdate } from "@/types";
 
-export function useWorkoutList(params?: QueryParams) {
+export function useWorkoutList(params?: Record<string, unknown>) {
   return useQuery({
     queryKey: ["workouts", params],
-    queryFn: () => workoutService.list(params),
+    queryFn: () => apiList<Workout>("/admin/workouts", params),
   });
 }
 
 export function useWorkout(id: string) {
   return useQuery({
     queryKey: ["workouts", id],
-    queryFn: () => workoutService.get(id),
+    queryFn: () => apiGetOne<Workout>(`/admin/workouts/${id}`),
     enabled: !!id,
   });
 }
@@ -26,7 +34,8 @@ export function useWorkout(id: string) {
 export function useCreateWorkout() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: WorkoutCreate) => workoutService.create(data),
+    mutationFn: (data: WorkoutCreate) =>
+      apiCreateOne<Workout>("/admin/workouts", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["workouts"] });
     },
@@ -37,7 +46,7 @@ export function useUpdateWorkout() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: WorkoutUpdate }) =>
-      workoutService.update(id, data),
+      apiUpdateOne<Workout>(`/admin/workouts/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["workouts"] });
     },
@@ -47,7 +56,7 @@ export function useUpdateWorkout() {
 export function useDeleteWorkout() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => workoutService.remove(id),
+    mutationFn: (id: string) => apiRemoveOne(`/admin/workouts/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["workouts"] });
     },
@@ -57,7 +66,7 @@ export function useDeleteWorkout() {
 export function useWorkoutExercises(workoutId: string | undefined) {
   return useQuery({
     queryKey: ["workout-exercises", workoutId],
-    queryFn: () => workoutService.getExercises(workoutId!),
+    queryFn: () => apiGet<WorkoutExercise[]>(`/admin/workouts/${workoutId}/exercises/`),
     enabled: !!workoutId,
   });
 }
@@ -66,7 +75,7 @@ export function useAddWorkoutExercise() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ workoutId, data }: { workoutId: string; data: WorkoutExerciseCreate }) =>
-      workoutService.addExercise(workoutId, data),
+      apiPost<WorkoutExercise>(`/admin/workouts/${workoutId}/exercises/`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["workout-exercises"] });
     },
@@ -77,7 +86,7 @@ export function useUpdateWorkoutExercise() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ workoutId, exerciseId, data }: { workoutId: string; exerciseId: string; data: WorkoutExerciseUpdate }) =>
-      workoutService.updateExercise(workoutId, exerciseId, data),
+      apiPatch<WorkoutExercise>(`/admin/workouts/${workoutId}/exercises/${exerciseId}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["workout-exercises"] });
     },
@@ -88,7 +97,7 @@ export function useRemoveWorkoutExercise() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ workoutId, exerciseId }: { workoutId: string; exerciseId: string }) =>
-      workoutService.removeExercise(workoutId, exerciseId),
+      apiDelete(`/admin/workouts/${workoutId}/exercises/${exerciseId}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["workout-exercises"] });
     },

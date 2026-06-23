@@ -1,7 +1,7 @@
 "use client";
 
 import { DashboardLayout } from "@/components/dashboard-layout";
-import { mediaService, type MediaUploadResponse } from "@/services/media.service";
+import { uploadMediaAction } from "@/actions/media.action";
 import { useMutation } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
@@ -9,12 +9,22 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Upload, File, Loader2 } from "lucide-react";
 
+interface MediaUploadResponse {
+  url: string;
+  filename: string;
+  type: string;
+}
+
 export default function MediaPage() {
   const [lastUpload, setLastUpload] = useState<MediaUploadResponse | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const uploadMutation = useMutation({
-    mutationFn: (file: File) => mediaService.upload(file, ""),
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      return uploadMediaAction(formData);
+    },
     onSuccess: (data) => {
       setLastUpload(data);
       toast.success("Mídia enviada com sucesso");

@@ -202,11 +202,15 @@
 - [x] `api.ts` (axios) lê token do `token-store` (fallback js-cookie)
 - [x] Token JWT mantido em `token-store` (módulo) para compatibilidade com axios até S1.3
 
-### Fase S1.3 — Proxy de Todas as Chamadas CRUD
+### Fase S1.3 — Proxy de Todas as Chamadas CRUD ✅
 
-- [ ] Refatorar hooks para chamar `api.action.ts` em vez de `services/*.ts` + axios
-- [ ] Remover `src/lib/api.ts` (axios) e interceptors
-- [ ] Remover `NEXT_PUBLIC_API_URL` do .env
+- [x] Refatorar hooks para chamar `api.action.ts` em vez de `services/*.ts` + axios
+- [x] Remover `src/lib/api.ts` (axios) e interceptors
+- [x] Remover `NEXT_PUBLIC_API_URL` do .env
+- [x] Criar `src/actions/media.action.ts` para upload de mídia via server action
+- [x] Remover `src/services/` e todos os arquivos de serviço
+- [x] Remover `src/lib/token-store.ts` (não mais necessário)
+- [x] Remover dependência `axios` do `package.json`
 
 ### Fase S1.4 — Finalização
 

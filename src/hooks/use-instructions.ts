@@ -3,13 +3,19 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { instructionService } from "@/services/instruction.service";
-import type { InstructionCreate, InstructionUpdate } from "@/types";
+import {
+  apiGet,
+  apiPost,
+  apiPatch,
+  apiDelete,
+} from "@/actions/api.action";
+import type { ExerciseInstruction, InstructionCreate, InstructionUpdate } from "@/types";
 
 export function useInstructionList(exerciseId: string | undefined) {
   return useQuery({
     queryKey: ["instructions", exerciseId],
-    queryFn: () => instructionService.list(exerciseId!),
+    queryFn: () =>
+      apiGet<ExerciseInstruction[]>(`/admin/catalog/exercises/${exerciseId}/instructions/`),
     enabled: !!exerciseId,
   });
 }
@@ -18,7 +24,7 @@ export function useCreateInstruction() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ exerciseId, data }: { exerciseId: string; data: InstructionCreate }) =>
-      instructionService.create(exerciseId, data),
+      apiPost<ExerciseInstruction>(`/admin/catalog/exercises/${exerciseId}/instructions/`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["instructions"] });
     },
@@ -29,7 +35,7 @@ export function useUpdateInstruction() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ exerciseId, instructionId, data }: { exerciseId: string; instructionId: string; data: InstructionUpdate }) =>
-      instructionService.update(exerciseId, instructionId, data),
+      apiPatch<ExerciseInstruction>(`/admin/catalog/exercises/${exerciseId}/instructions/${instructionId}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["instructions"] });
     },
@@ -40,7 +46,7 @@ export function useDeleteInstruction() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ exerciseId, instructionId }: { exerciseId: string; instructionId: string }) =>
-      instructionService.remove(exerciseId, instructionId),
+      apiDelete(`/admin/catalog/exercises/${exerciseId}/instructions/${instructionId}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["instructions"] });
     },

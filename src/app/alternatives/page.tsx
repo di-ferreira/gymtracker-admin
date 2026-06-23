@@ -2,7 +2,7 @@
 
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { useExerciseList } from "@/hooks/use-exercises";
-import { substitutionService, type AlternativeResponse, type AlternativeCreate } from "@/services/substitution.service";
+import { apiGet, apiPost, apiDelete } from "@/actions/api.action";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -42,6 +42,22 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Trash2, Search } from "lucide-react";
 
+interface AlternativeResponse {
+  id: string;
+  exercise_id: string;
+  alternative_exercise_id: string;
+  reason: string | null;
+  note: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface AlternativeCreate {
+  alternative_exercise_id: string;
+  reason?: string | null;
+  note?: string | null;
+}
+
 export default function AlternativesPage() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
@@ -51,13 +67,13 @@ export default function AlternativesPage() {
 
   const { data: alternatives, isLoading } = useQuery({
     queryKey: ["substitutions", selectedExercise],
-    queryFn: () => substitutionService.list(selectedExercise!),
+    queryFn: () => apiGet<AlternativeResponse[]>(`/admin/catalog/exercises/${selectedExercise!}/alternatives/`),
     enabled: !!selectedExercise,
   });
 
   const deleteMutation = useMutation({
     mutationFn: (alternativeId: string) =>
-      substitutionService.remove(selectedExercise!, alternativeId),
+      apiDelete(`/admin/catalog/exercises/${selectedExercise!}/alternatives/${alternativeId}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["substitutions"] });
       toast.success("Substituição removida");
@@ -216,7 +232,7 @@ function CreateSubstitutionDialog({
 
   const createMutation = useMutation({
     mutationFn: (data: AlternativeCreate) =>
-      substitutionService.create(exerciseId, data),
+      apiPost<AlternativeResponse>(`/admin/catalog/exercises/${exerciseId}/alternatives/`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["substitutions"] });
       toast.success("Substituição adicionada");

@@ -2,40 +2,34 @@ import {
   useQuery,
   useMutation,
   useQueryClient,
-  type UseQueryOptions,
 } from "@tanstack/react-query";
 import type { ApiResponse, PaginatedResponse } from "@/types";
-
-type ServiceMethod<T, TCreate, TUpdate> = {
-  list: (params?: Record<string, unknown>) => Promise<PaginatedResponse<T>>;
-  get: (id: string) => Promise<ApiResponse<T>>;
-  create: (data: TCreate) => Promise<ApiResponse<T>>;
-  update: (id: string, data: TUpdate) => Promise<ApiResponse<T>>;
-  remove: (id: string) => Promise<void>;
-};
+import {
+  apiList,
+  apiGetOne,
+  apiCreateOne,
+  apiUpdateOne,
+  apiRemoveOne,
+} from "@/actions/api.action";
 
 export function createCrudHooks<T, TCreate, TUpdate>(
-  service: ServiceMethod<T, TCreate, TUpdate>,
+  endpoint: string,
   queryKey: string,
 ) {
   const allKey = [queryKey, "list"] as const;
   const detailKey = [queryKey, "detail"] as const;
 
-  function useList(
-    params?: Record<string, unknown>,
-    options?: Partial<UseQueryOptions<PaginatedResponse<T>>>,
-  ) {
+  function useList(params?: Record<string, unknown>) {
     return useQuery({
       queryKey: [...allKey, params],
-      queryFn: () => service.list(params),
-      ...options,
+      queryFn: () => apiList<T>(endpoint, params),
     });
   }
 
   function useGet(id: string | undefined) {
     return useQuery({
       queryKey: [...detailKey, id],
-      queryFn: () => service.get(id!),
+      queryFn: () => apiGetOne<T>(`${endpoint}/${id}`),
       enabled: !!id,
     });
   }
@@ -43,7 +37,7 @@ export function createCrudHooks<T, TCreate, TUpdate>(
   function useCreate() {
     const queryClient = useQueryClient();
     return useMutation({
-      mutationFn: (data: TCreate) => service.create(data),
+      mutationFn: (data: TCreate) => apiCreateOne<T>(endpoint, data),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: allKey });
       },
@@ -54,7 +48,7 @@ export function createCrudHooks<T, TCreate, TUpdate>(
     const queryClient = useQueryClient();
     return useMutation({
       mutationFn: ({ id, data }: { id: string; data: TUpdate }) =>
-        service.update(id, data),
+        apiUpdateOne<T>(`${endpoint}/${id}`, data),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: allKey });
       },
@@ -64,7 +58,7 @@ export function createCrudHooks<T, TCreate, TUpdate>(
   function useRemove() {
     const queryClient = useQueryClient();
     return useMutation({
-      mutationFn: (id: string) => service.remove(id),
+      mutationFn: (id: string) => apiRemoveOne(`${endpoint}/${id}`),
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: allKey });
       },

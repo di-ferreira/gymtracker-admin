@@ -1,5 +1,4 @@
 import { createCrudHooks } from "@/hooks/use-crud";
-import { muscleGroupService } from "@/services/muscle-group.service";
 import type { MuscleGroup, MuscleGroupCreate, MuscleGroupUpdate } from "@/types";
 
 export const {
@@ -9,6 +8,6 @@ export const {
   useUpdate: useUpdateMuscleGroup,
   useRemove: useDeleteMuscleGroup,
 } = createCrudHooks<MuscleGroup, MuscleGroupCreate, MuscleGroupUpdate>(
-  muscleGroupService,
+  "/admin/catalog/muscle-groups",
   "muscle-groups",
 );

@@ -88,3 +88,38 @@ export async function apiDelete(endpoint: string): Promise<void> {
     throw new Error(detail);
   }
 }
+
+import type { ApiResponse, PaginatedResponse } from "@/types";
+
+export async function apiList<T>(
+  endpoint: string,
+  params?: Record<string, unknown>,
+): Promise<PaginatedResponse<T>> {
+  const data = await apiGet<T[]>(endpoint, params);
+  return {
+    data: data ?? [],
+    total: Array.isArray(data) ? (data as T[]).length : 0,
+    page: (params?.page as number) ?? 1,
+    per_page: (params?.per_page as number) ?? 100,
+    total_pages: 1,
+  };
+}
+
+export async function apiGetOne<T>(endpoint: string): Promise<ApiResponse<T>> {
+  const data = await apiGet<T>(endpoint);
+  return { data };
+}
+
+export async function apiCreateOne<T>(endpoint: string, body: unknown): Promise<ApiResponse<T>> {
+  const data = await apiPost<T>(endpoint, body);
+  return { data };
+}
+
+export async function apiUpdateOne<T>(endpoint: string, body: unknown): Promise<ApiResponse<T>> {
+  const data = await apiPatch<T>(endpoint, body);
+  return { data };
+}
+
+export async function apiRemoveOne(endpoint: string): Promise<void> {
+  await apiDelete(endpoint);
+}
