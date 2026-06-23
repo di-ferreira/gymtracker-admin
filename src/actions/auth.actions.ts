@@ -66,7 +66,11 @@ export async function meAction() {
     return null;
   }
 
-  return res.json();
+  try {
+    return await res.json();
+  } catch {
+    return null;
+  }
 }
 
 export async function logoutAction() {

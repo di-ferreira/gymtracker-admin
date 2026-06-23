@@ -30,6 +30,7 @@ export default function LoginPage() {
       await login({ email, password });
       router.replace("/");
     } catch (err) {
+      console.error("Login failed:", err);
       const msg = err instanceof Error ? err.message : "Erro ao fazer login. Verifique suas credenciais.";
       toast.error(msg);
     } finally {
