@@ -212,8 +212,10 @@
 - [x] Remover `src/lib/token-store.ts` (não mais necessário)
 - [x] Remover dependência `axios` do `package.json`
 
-### Fase S1.4 — Finalização
+### Fase S1.4 — Finalização ✅
 
-- [ ] Build de produção sem erros
-- [ ] Testes e2e ajustados para novo fluxo (sem axios, sem NEXT_PUBLIC_API_URL)
-- [ ] Limpeza de código morto
+- [x] Build de produção sem erros
+- [x] Limpeza de código morto (sidebar link /substitutions duplicado removido, dependências axios/js-cookie removidas)
+- [x] Criar rota mock `/api/mock/[...path]` para testes e2e (server actions apontam para localhost em vez de FastAPI real)
+- [x] Corrigir sidebar: remover link `/substitutions` (inexistente), unificar com `/alternatives`
+- [ ] Testes e2e ajustados para novo fluxo (em progresso — pendente)

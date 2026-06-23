@@ -3,7 +3,6 @@
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
 import {
-  Activity,
   ArrowLeftRight,
   Calendar,
   Dumbbell,
@@ -25,8 +24,7 @@ const links = [
   { href: '/equipment', label: 'Equipamentos', icon: Weight },
   { href: '/muscle-groups', label: 'Grupos Musculares', icon: Shirt },
   { href: '/movement-groups', label: 'Grupos de Movimento', icon: Heart },
-  { href: '/alternatives', label: 'Alternativas', icon: ArrowLeftRight },
-  { href: '/substitutions', label: 'Substituições', icon: Activity },
+  { href: '/alternatives', label: 'Substituições', icon: ArrowLeftRight },
 ];
 
 interface SidebarProps {

@@ -17,5 +17,8 @@ export default defineConfig({
     port: 3000,
     reuseExistingServer: !process.env.CI,
     timeout: 30000,
+    env: {
+      API_URL: "http://localhost:3000/api/mock",
+    },
   },
 });
