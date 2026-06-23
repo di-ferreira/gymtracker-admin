@@ -173,11 +173,43 @@
 
 ## Fase 15 — Gestão de Treinos (Workouts)
 
-- [ ] Criar tipos Workout, WorkoutCreate, WorkoutUpdate, WorkoutExercise, etc.
-- [ ] Criar workout.service.ts (CRUD workouts + workout-exercises)
-- [ ] Criar hooks use-workouts.ts
-- [ ] Página /workouts: listar treinos com busca e filtro por usuário
-- [ ] Página /workouts/new: criar treino com nome, descrição, selecionar usuário
-- [ ] Página /workouts/[id]: detalhe do treino + gerenciar exercícios (add, remove, reorder)
-- [ ] Adicionar "Treinos" no sidebar
+- [x] Criar tipos Workout, WorkoutCreate, WorkoutUpdate, WorkoutExercise, etc.
+- [x] Criar workout.service.ts (CRUD workouts + workout-exercises)
+- [x] Criar hooks use-workouts.ts
+- [x] Página /workouts: listar treinos com busca e filtro por usuário
+- [x] Página /workouts/new: criar treino com nome, descrição, selecionar usuário
+- [x] Página /workouts/[id]: detalhe do treino + gerenciar exercícios (add, remove, reorder)
+- [x] Adicionar "Treinos" no sidebar
 - [ ] Testes Playwright para treinos
+
+---
+
+## Fase S1 — Segurança: Server Actions + Criptografia (Parte 1)
+
+**Objetivo:** Substituir chamadas diretas à FastAPI (axios) por Server Actions do Next.js, com criptografia assimétrica da senha no login e cookie HTTP-only para o token JWT.
+
+### Fase S1.1 — Fundação (Criptografia + Server Actions) ✅
+
+- [x] Script para gerar par de chaves RSA (2048 bits)
+- [x] `src/lib/crypto.ts` — utilitário de criptografia (cliente: encrypt, servidor: decrypt)
+- [x] `src/actions/api.action.ts` — server actions genéricas (apiGet, apiPost, apiPatch, apiDelete)
+- [x] `src/actions/auth.actions.ts` — server actions de autenticação (login, me, logout)
+- [x] Configurar variáveis de ambiente (ENCRYPTION_PRIVATE_KEY, NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY, API_URL)
+
+### Fase S1.2 — Integração Auth (AuthContext + Login)
+
+- [ ] Atualizar `auth-context.tsx` para usar server actions (login com criptografia, me, logout)
+- [ ] Atualizar `login/page.tsx` para criptografar senha antes de enviar
+- [ ] Token JWT passa a ser HTTP-only + mantido em React state na memória
+
+### Fase S1.3 — Proxy de Todas as Chamadas CRUD
+
+- [ ] Refatorar hooks para chamar `api.action.ts` em vez de `services/*.ts` + axios
+- [ ] Remover `src/lib/api.ts` (axios) e interceptors
+- [ ] Remover `NEXT_PUBLIC_API_URL` do .env
+
+### Fase S1.4 — Finalização
+
+- [ ] Build de produção sem erros
+- [ ] Testes e2e ajustados para novo fluxo (sem axios, sem NEXT_PUBLIC_API_URL)
+- [ ] Limpeza de código morto
