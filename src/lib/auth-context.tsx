@@ -2,17 +2,21 @@
 
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import Cookies from "js-cookie";
-import { authService } from "@/services/auth.service";
-import type { User, LoginRequest } from "@/types";
+import { loginAction, meAction, logoutAction } from "@/actions/auth.actions";
+import { encryptPassword } from "@/lib/crypto";
+import { setToken } from "@/lib/token-store";
+import type { User } from "@/types";
 
-const TOKEN_KEY = "gymtracker_token";
+interface LoginParams {
+  email: string;
+  password: string;
+}
 
 interface AuthState {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (data: LoginRequest) => Promise<void>;
+  login: (data: LoginParams) => Promise<void>;
   logout: () => void;
 }
 
@@ -23,49 +27,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  const logout = useCallback(() => {
-    Cookies.remove(TOKEN_KEY);
+  const logout = useCallback(async () => {
+    try {
+      await logoutAction();
+    } catch {
+      // best effort
+    }
+    setToken(null);
     setUser(null);
     router.push("/login");
   }, [router]);
 
   useEffect(() => {
-    const token = Cookies.get(TOKEN_KEY);
-    if (!token) {
-      setIsLoading(false);
-      return;
-    }
-
-    authService
-      .me()
+    meAction()
       .then((u) => {
+        if (!u) {
+          setIsLoading(false);
+          return;
+        }
         if (u.role !== "admin") {
-          logout();
+          logoutAction().catch(() => {});
+          setIsLoading(false);
           return;
         }
         setUser(u);
+        setIsLoading(false);
       })
       .catch(() => {
-        Cookies.remove(TOKEN_KEY);
-      })
-      .finally(() => setIsLoading(false));
-  }, [logout]);
+        setIsLoading(false);
+      });
+  }, []);
 
-  const login = useCallback(
-    async (data: LoginRequest) => {
-      const { access_token } = await authService.login(data);
-      Cookies.set(TOKEN_KEY, access_token, { path: "/", sameSite: "lax" });
+  const login = useCallback(async (data: LoginParams) => {
+    const encryptedPassword = await encryptPassword(data.password);
+    const { token } = await loginAction(data.email, encryptedPassword);
+    setToken(token);
 
-      const u = await authService.me();
-      if (u.role !== "admin") {
-        Cookies.remove(TOKEN_KEY);
-        throw new Error("Acesso restrito a administradores.");
-      }
+    const u = await meAction();
+    if (!u || u.role !== "admin") {
+      setToken(null);
+      await logoutAction().catch(() => {});
+      throw new Error("Acesso restrito a administradores.");
+    }
 
-      setUser(u);
-    },
-    [],
-  );
+    setUser(u);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ user, isLoading, isAuthenticated: !!user, login, logout }}>

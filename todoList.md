@@ -160,18 +160,18 @@
 - [x] Corrigir testes de substituições (3 testes: listar, adicionar, remover)
 - [ ] Testar CRUD completo com API rodando
 
-## Fase 14 — Alinhamento com API v0.1.0
+## Fase 14 — Alinhamento com API v0.1.0 ✅
 
-- [ ] Ajustar tipos Exercise/Equipment/MuscleGroup/MovementGroup (remover slug, deleted_at, target_muscle_primary; adicionar equipment_ids)
-- [ ] Corrigir query params em base.ts (sort_by→order_by, sort_order→order_dir)
-- [ ] Remover métodos obsoletos: addEquipment/removeEquipment, media.list()
-- [ ] Remover Catalog Version (página, serviço, sidebar, testes)
-- [ ] Criar instruction.service.ts + use-instructions.ts
-- [ ] Adicionar step builder reordenável na página de detalhe do exercício
-- [ ] Adicionar multi-select de equipamentos nos formulários de criar/editar exercício
-- [ ] Corrigir ExerciseUpdate para incluir movement_group_id, muscle_group_id, equipment_ids
+- [x] Ajustar tipos Exercise/Equipment/MuscleGroup/MovementGroup (remover slug, deleted_at; adicionar equipment_ids)
+- [x] Corrigir query params em base.ts (sort_by→order_by, sort_order→order_dir)
+- [x] Remover métodos obsoletos: addEquipment/removeEquipment, media.list()
+- [x] Remover Catalog Version (página, serviço, sidebar, testes)
+- [x] Criar instruction.service.ts + use-instructions.ts
+- [x] Adicionar step builder reordenável na página de detalhe do exercício
+- [x] Adicionar multi-select de equipamentos nos formulários de criar/editar exercício
+- [x] Corrigir ExerciseUpdate para incluir movement_group_id, muscle_group_id, equipment_ids
 
-## Fase 15 — Gestão de Treinos (Workouts)
+## Fase 15 — Gestão de Treinos (Workouts) ✅
 
 - [x] Criar tipos Workout, WorkoutCreate, WorkoutUpdate, WorkoutExercise, etc.
 - [x] Criar workout.service.ts (CRUD workouts + workout-exercises)
@@ -180,7 +180,7 @@
 - [x] Página /workouts/new: criar treino com nome, descrição, selecionar usuário
 - [x] Página /workouts/[id]: detalhe do treino + gerenciar exercícios (add, remove, reorder)
 - [x] Adicionar "Treinos" no sidebar
-- [ ] Testes Playwright para treinos
+- [ ] Testes Playwright para treinos (postergado)
 
 ---
 
@@ -196,11 +196,11 @@
 - [x] `src/actions/auth.actions.ts` — server actions de autenticação (login, me, logout)
 - [x] Configurar variáveis de ambiente (ENCRYPTION_PRIVATE_KEY, NEXT_PUBLIC_ENCRYPTION_PUBLIC_KEY, API_URL)
 
-### Fase S1.2 — Integração Auth (AuthContext + Login)
+### Fase S1.2 — Integração Auth (AuthContext + Login) ✅
 
-- [ ] Atualizar `auth-context.tsx` para usar server actions (login com criptografia, me, logout)
-- [ ] Atualizar `login/page.tsx` para criptografar senha antes de enviar
-- [ ] Token JWT passa a ser HTTP-only + mantido em React state na memória
+- [x] Atualizar `auth-context.tsx` para usar server actions (login com criptografia, me, logout)
+- [x] `api.ts` (axios) lê token do `token-store` (fallback js-cookie)
+- [x] Token JWT mantido em `token-store` (módulo) para compatibilidade com axios até S1.3
 
 ### Fase S1.3 — Proxy de Todas as Chamadas CRUD
 

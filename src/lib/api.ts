@@ -1,6 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "sonner";
+import { getToken } from "@/lib/token-store";
 
 const TOKEN_KEY = "gymtracker_token";
 
@@ -14,7 +15,7 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const token = Cookies.get(TOKEN_KEY);
+    const token = getToken() ?? Cookies.get(TOKEN_KEY);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
