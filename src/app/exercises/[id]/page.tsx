@@ -37,6 +37,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import { MediaModal } from "@/components/media-modal";
 import {
   ArrowLeft,
   Edit,
@@ -75,6 +76,7 @@ export default function ExerciseDetailPage() {
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [instructionOpen, setInstructionOpen] = useState(false);
   const [editingInstruction, setEditingInstruction] = useState<string | null>(null);
+  const [mediaModal, setMediaModal] = useState<{ src: string; type: "image" | "video" } | null>(null);
   const exercise = data?.data;
 
   async function handleDelete() {
@@ -364,7 +366,7 @@ export default function ExerciseDetailPage() {
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
                 {exercise.thumbnail_url && (
-                  <div>
+                  <button type="button" onClick={() => setMediaModal({ src: exercise.thumbnail_url!, type: "image" })} className="text-left cursor-zoom-in">
                     <span className="text-sm text-muted-foreground">Thumbnail</span>
                     <img
                       src={exercise.thumbnail_url}
@@ -372,10 +374,10 @@ export default function ExerciseDetailPage() {
                       className="mt-1 rounded-lg border border-border w-full aspect-video object-cover"
                       onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                     />
-                  </div>
+                  </button>
                 )}
                 {exercise.image_url && (
-                  <div>
+                  <button type="button" onClick={() => setMediaModal({ src: exercise.image_url!, type: "image" })} className="text-left cursor-zoom-in">
                     <span className="text-sm text-muted-foreground">Imagem</span>
                     <img
                       src={exercise.image_url}
@@ -383,10 +385,10 @@ export default function ExerciseDetailPage() {
                       className="mt-1 rounded-lg border border-border w-full aspect-video object-cover"
                       onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                     />
-                  </div>
+                  </button>
                 )}
                 {exercise.gif_url && (
-                  <div>
+                  <button type="button" onClick={() => setMediaModal({ src: exercise.gif_url!, type: "image" })} className="text-left cursor-zoom-in">
                     <span className="text-sm text-muted-foreground">GIF</span>
                     <img
                       src={exercise.gif_url}
@@ -394,23 +396,31 @@ export default function ExerciseDetailPage() {
                       className="mt-1 rounded-lg border border-border w-full aspect-video object-cover"
                       onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                     />
-                  </div>
+                  </button>
                 )}
                 {exercise.video_url && (
-                  <div>
+                  <button type="button" onClick={() => setMediaModal({ src: exercise.video_url!, type: "video" })} className="text-left cursor-zoom-in">
                     <span className="text-sm text-muted-foreground">Vídeo</span>
                     <video
                       src={exercise.video_url}
                       controls
-                      className="mt-1 rounded-lg border border-border w-full aspect-video"
+                      className="mt-1 rounded-lg border border-border w-full aspect-video pointer-events-none"
                     >
                       <p className="text-sm text-muted-foreground">Seu navegador não suporta vídeo.</p>
                     </video>
-                  </div>
+                  </button>
                 )}
               </div>
             </CardContent>
           </Card>
+        )}
+        {mediaModal && (
+          <MediaModal
+            open={!!mediaModal}
+            onClose={() => setMediaModal(null)}
+            src={mediaModal.src}
+            type={mediaModal.type}
+          />
         )}
       </div>
     </DashboardLayout>
