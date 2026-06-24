@@ -2,24 +2,40 @@ import { NextRequest, NextResponse } from "next/server";
 
 const clone = <T>(data: T): T => JSON.parse(JSON.stringify(data));
 
+const mockMuscleGroups = [
+  { id: "m1", name: "Peitoral", slug: "peitoral", description: "Músculos do peito", order_index: 1, created_at: "", updated_at: "" },
+  { id: "m2", name: "Bíceps", slug: "biceps", description: "Músculos do braço", order_index: 2, created_at: "", updated_at: "" },
+];
+
+const mockMovementGroups = [
+  { id: "mg1", name: "Empurrar", slug: "empurrar", description: "Movimentos de empurrar", order_index: 1, created_at: "", updated_at: "" },
+  { id: "mg2", name: "Puxar", slug: "puxar", description: "Movimentos de puxar", order_index: 2, created_at: "", updated_at: "" },
+];
+
+const mockEquipment = [
+  { id: "eq1", name: "Barra Reta", slug: "barra-reta", description: null, category: "Barras", order_index: 1, deleted_at: null, created_at: "", updated_at: "" },
+  { id: "eq2", name: "Halteres", slug: "halteres", description: null, category: "Pesos", order_index: 2, deleted_at: null, created_at: "", updated_at: "" },
+];
+
 const initialExercises = [
-  { id: "e1", name: "Supino Reto", description: "Exercício clássico para peitoral", execution_tips: "Mantenha os cotovelos a 45 graus", difficulty: "Intermediate", movement_group_id: "mg1", muscle_group_id: "m1", equipment_ids: ["eq1"], instructions: [], thumbnail_url: null, image_url: null, gif_url: null, video_url: null, created_at: "2025-01-01T00:00:00Z", updated_at: "2025-01-01T00:00:00Z" },
-  { id: "e2", name: "Rosca Direta", description: "Exercício para bíceps", execution_tips: "Não balançar o corpo", difficulty: "Beginner", movement_group_id: "mg2", muscle_group_id: "m2", equipment_ids: ["eq2"], instructions: [], thumbnail_url: null, image_url: null, gif_url: null, video_url: null, created_at: "2025-01-02T00:00:00Z", updated_at: "2025-01-02T00:00:00Z" },
-];
-
-const initialEquipment = [
-  { id: "eq1", name: "Barra Reta", description: null, category: "Barras", order_index: 1, created_at: "", updated_at: "" },
-  { id: "eq2", name: "Halteres", description: null, category: "Pesos", order_index: 2, created_at: "", updated_at: "" },
-];
-
-const initialMuscleGroups = [
-  { id: "m1", name: "Peitoral", description: "Músculos do peito", order_index: 1, created_at: "", updated_at: "" },
-  { id: "m2", name: "Bíceps", description: "Músculos do braço", order_index: 2, created_at: "", updated_at: "" },
-];
-
-const initialMovementGroups = [
-  { id: "mg1", name: "Empurrar", description: "Movimentos de empurrar", order_index: 1, created_at: "", updated_at: "" },
-  { id: "mg2", name: "Puxar", description: "Movimentos de puxar", order_index: 2, created_at: "", updated_at: "" },
+  {
+    id: "e1", name: "Supino Reto", slug: "supino-reto",
+    description: "Exercício clássico para peitoral", execution_tips: "Mantenha os cotovelos a 45 graus",
+    difficulty: "Intermediate", thumbnail_url: null, image_url: null, gif_url: null, video_url: null,
+    movement_group_id: "mg1", muscle_group_id: "m1",
+    muscle_group: mockMuscleGroups[0], movement_group: mockMovementGroups[0],
+    equipment: [mockEquipment[0]], equipment_ids: ["eq1"],
+    instructions: [], created_at: "2025-01-01T00:00:00Z", updated_at: "2025-01-01T00:00:00Z",
+  },
+  {
+    id: "e2", name: "Rosca Direta", slug: "rosca-direta",
+    description: "Exercício para bíceps", execution_tips: "Não balançar o corpo",
+    difficulty: "Beginner", thumbnail_url: null, image_url: null, gif_url: null, video_url: null,
+    movement_group_id: "mg2", muscle_group_id: "m2",
+    muscle_group: mockMuscleGroups[1], movement_group: mockMovementGroups[1],
+    equipment: [mockEquipment[1]], equipment_ids: ["eq2"],
+    instructions: [], created_at: "2025-01-02T00:00:00Z", updated_at: "2025-01-02T00:00:00Z",
+  },
 ];
 
 const initialSubstitutions = [
@@ -34,7 +50,7 @@ const initialUsers = [
 
 const config = { delay: 0, emptyMode: false };
 
-const state = clone({ exercises: initialExercises, equipment: initialEquipment, muscleGroups: initialMuscleGroups, movementGroups: initialMovementGroups, substitutions: initialSubstitutions, users: initialUsers });
+const state = clone({ exercises: initialExercises, equipment: mockEquipment, muscleGroups: mockMuscleGroups, movementGroups: mockMovementGroups, substitutions: initialSubstitutions, users: initialUsers });
 
 let idCounter = 100;
 const nextId = () => `mock-${++idCounter}`;
@@ -91,7 +107,7 @@ async function route(req: NextRequest, path: string[]): Promise<NextResponse> {
   const p = path.join("/");
 
   if (p === "__reset") {
-    Object.assign(state, clone({ exercises: initialExercises, equipment: initialEquipment, muscleGroups: initialMuscleGroups, movementGroups: initialMovementGroups, substitutions: initialSubstitutions, users: initialUsers }));
+    Object.assign(state, clone({ exercises: initialExercises, equipment: mockEquipment, muscleGroups: mockMuscleGroups, movementGroups: mockMovementGroups, substitutions: initialSubstitutions, users: initialUsers }));
     config.delay = 0; config.emptyMode = false; idCounter = 100;
     return json({ ok: true });
   }
@@ -112,7 +128,7 @@ async function route(req: NextRequest, path: string[]): Promise<NextResponse> {
   }
   if (p === "auth/me") { await maybeDelay(); return json(state.users[0]); }
   if (p === "auth/login") return json({ access_token: "fake-test-token" });
-  if (p === "admin/media/upload") return json({ url: "https://example.com/uploads/test.gif", filename: "test.gif", type: "image/gif" });
+  if (p === "admin/media/upload") return json({ url: "https://example.com/uploads/test.gif", path: "exercises/test.gif", filename: "test.gif" });
   if (p === "admin/workouts" || (p.startsWith("admin/workouts/"))) {
     return json([]); // workouts not used in tests
   }
@@ -135,6 +151,23 @@ async function route(req: NextRequest, path: string[]): Promise<NextResponse> {
         return json({ ok: true });
       }
       return json({ error: "method not allowed" }, 405);
+    }
+    if (resource === "exercises" && !path[3] && req.method === "GET") {
+      if (config.emptyMode) return json({ data: [], pagination: { page: 1, per_page: 0, total_pages: 0, has_previous: false, has_next: false, total_items: 0 } });
+      await maybeDelay();
+      const url = new URL(req.url);
+      const items = applySearch(state.exercises as Record<string, unknown>[], url.searchParams.get("search"));
+      return json({
+        data: items,
+        pagination: {
+          page: 1,
+          per_page: items.length,
+          total_pages: 1,
+          has_previous: false,
+          has_next: false,
+          total_items: items.length,
+        },
+      });
     }
     return handleCrud(req, resource, path[3]);
   }

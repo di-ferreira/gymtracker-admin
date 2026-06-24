@@ -43,6 +43,7 @@ export interface AdminUpdateUserRequest {
 export interface MuscleGroup {
   id: string;
   name: string;
+  slug: string;
   description: string | null;
   order_index: number;
   created_at: string;
@@ -64,6 +65,7 @@ export interface MuscleGroupUpdate {
 export interface MovementGroup {
   id: string;
   name: string;
+  slug: string;
   description: string | null;
   order_index: number;
   created_at: string;
@@ -85,9 +87,11 @@ export interface MovementGroupUpdate {
 export interface Equipment {
   id: string;
   name: string;
-  description: string;
-  category: string;
+  slug: string;
+  description: string | null;
+  category: string | null;
   order_index: number;
+  deleted_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -109,6 +113,7 @@ export interface EquipmentUpdate {
 export interface Exercise {
   id: string;
   name: string;
+  slug: string;
   description: string | null;
   execution_tips: string | null;
   difficulty: DifficultyLevel | null;
@@ -118,6 +123,9 @@ export interface Exercise {
   video_url: string | null;
   movement_group_id: string;
   muscle_group_id: string;
+  muscle_group: MuscleGroup;
+  movement_group: MovementGroup;
+  equipment: Equipment[];
   equipment_ids?: string[];
   instructions?: ExerciseInstruction[];
   created_at: string;
@@ -126,6 +134,7 @@ export interface Exercise {
 
 export interface ExerciseCreate {
   name: string;
+  slug?: string;
   description?: string;
   execution_tips?: string;
   difficulty?: DifficultyLevel;
@@ -140,6 +149,7 @@ export interface ExerciseCreate {
 
 export interface ExerciseUpdate {
   name?: string;
+  slug?: string;
   description?: string;
   execution_tips?: string;
   difficulty?: DifficultyLevel;
@@ -195,6 +205,32 @@ export interface PaginatedResponse<T> {
   page: number;
   per_page: number;
   total_pages: number;
+}
+
+export interface PaginationInfo {
+  page: number;
+  per_page: number;
+  total_pages: number;
+  has_previous: boolean;
+  has_next: boolean;
+  total_items: number;
+}
+
+export interface PaginatedExerciseResponse {
+  data: Exercise[];
+  pagination: PaginationInfo;
+}
+
+export interface MediaUploadResponse {
+  url: string;
+  path: string;
+  filename: string;
+}
+
+export interface AlternativeCreate {
+  alternative_exercise_id: string;
+  reason?: string;
+  note?: string;
 }
 
 export interface Workout {

@@ -89,19 +89,40 @@ export async function apiDelete(endpoint: string): Promise<void> {
   }
 }
 
-import type { ApiResponse, PaginatedResponse } from "@/types";
+import type { ApiResponse, PaginatedResponse, PaginatedExerciseResponse } from "@/types";
 
 export async function apiList<T>(
   endpoint: string,
   params?: Record<string, unknown>,
 ): Promise<PaginatedResponse<T>> {
-  const data = await apiGet<T[]>(endpoint, params);
+  const apiParams = { ...params };
+  if (apiParams.page !== undefined) {
+    const perPage = (apiParams.per_page as number) ?? 20;
+    const page = apiParams.page as number;
+    apiParams.skip = (page - 1) * perPage;
+    apiParams.limit = perPage;
+    delete apiParams.page;
+    delete apiParams.per_page;
+  }
+
+  const result = await apiGet<T[] | PaginatedExerciseResponse>(endpoint, apiParams);
+
+  if (Array.isArray(result)) {
+    return {
+      data: result,
+      total: result.length,
+      page: (params?.page as number) ?? 1,
+      per_page: (params?.per_page as number) ?? (result.length || 100),
+      total_pages: 1,
+    };
+  }
+
   return {
-    data: data ?? [],
-    total: Array.isArray(data) ? (data as T[]).length : 0,
-    page: (params?.page as number) ?? 1,
-    per_page: (params?.per_page as number) ?? 100,
-    total_pages: 1,
+    data: result.data as T[],
+    total: result.pagination.total_items,
+    page: result.pagination.page,
+    per_page: result.pagination.per_page,
+    total_pages: result.pagination.total_pages,
   };
 }
 

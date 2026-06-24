@@ -3,9 +3,6 @@
 import { useParams, useRouter } from "next/navigation";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { useExercise, useDeleteExercise } from "@/hooks/use-exercises";
-import { useMuscleGroupList } from "@/hooks/use-muscle-groups";
-import { useMovementGroupList } from "@/hooks/use-movement-groups";
-import { useEquipmentList } from "@/hooks/use-equipment";
 import {
   useInstructionList,
   useCreateInstruction,
@@ -74,25 +71,11 @@ export default function ExerciseDetailPage() {
   const id = params.id as string;
   const { data, isLoading } = useExercise(id);
   const deleteExercise = useDeleteExercise();
-  const { data: muscleGroups } = useMuscleGroupList({ per_page: 100 });
-  const { data: movementGroups } = useMovementGroupList({ per_page: 100 });
-  const { data: equipmentData } = useEquipmentList({ per_page: 100 });
   const { data: instructions, isLoading: instructionsLoading } = useInstructionList(id);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [instructionOpen, setInstructionOpen] = useState(false);
   const [editingInstruction, setEditingInstruction] = useState<string | null>(null);
   const exercise = data?.data;
-
-  const muscleGroupName = muscleGroups?.data.find(
-    (mg) => mg.id === exercise?.muscle_group_id,
-  )?.name;
-  const movementGroupName = movementGroups?.data.find(
-    (mg) => mg.id === exercise?.movement_group_id,
-  )?.name;
-
-  const equipmentNames = exercise?.equipment_ids
-    ?.map((eid) => equipmentData?.data.find((eq) => eq.id === eid)?.name)
-    .filter(Boolean) ?? [];
 
   async function handleDelete() {
     try {
@@ -213,14 +196,14 @@ export default function ExerciseDetailPage() {
               </div>
             </div>
 
-            {equipmentNames.length > 0 && (
+            {exercise.equipment.length > 0 && (
               <div>
                 <span className="text-sm text-muted-foreground">Equipamentos</span>
                 <div className="flex flex-wrap gap-1.5 mt-1">
-                  {equipmentNames.map((name) => (
-                    <Badge key={name} variant="secondary">
+                  {exercise.equipment.map((eq) => (
+                    <Badge key={eq.id} variant="secondary">
                       <Weight className="h-3 w-3 mr-1" />
-                      {name}
+                      {eq.name}
                     </Badge>
                   ))}
                 </div>
@@ -261,7 +244,7 @@ export default function ExerciseDetailPage() {
                 <div className="flex items-center gap-2 mt-1">
                   <Bone className="h-4 w-4 text-muted-foreground" />
                   <span className="text-foreground">
-                    {muscleGroupName ?? exercise.muscle_group_id}
+                    {exercise.muscle_group.name}
                   </span>
                 </div>
               </div>
@@ -270,7 +253,7 @@ export default function ExerciseDetailPage() {
                 <div className="flex items-center gap-2 mt-1">
                   <Move3d className="h-4 w-4 text-muted-foreground" />
                   <span className="text-foreground">
-                    {movementGroupName ?? exercise.movement_group_id}
+                    {exercise.movement_group.name}
                   </span>
                 </div>
               </div>
@@ -387,6 +370,7 @@ export default function ExerciseDetailPage() {
                       src={exercise.thumbnail_url}
                       alt=""
                       className="mt-1 rounded-lg border border-border w-full aspect-video object-cover"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                     />
                   </div>
                 )}
@@ -397,7 +381,31 @@ export default function ExerciseDetailPage() {
                       src={exercise.image_url}
                       alt=""
                       className="mt-1 rounded-lg border border-border w-full aspect-video object-cover"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                     />
+                  </div>
+                )}
+                {exercise.gif_url && (
+                  <div>
+                    <span className="text-sm text-muted-foreground">GIF</span>
+                    <img
+                      src={exercise.gif_url}
+                      alt=""
+                      className="mt-1 rounded-lg border border-border w-full aspect-video object-cover"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    />
+                  </div>
+                )}
+                {exercise.video_url && (
+                  <div>
+                    <span className="text-sm text-muted-foreground">Vídeo</span>
+                    <video
+                      src={exercise.video_url}
+                      controls
+                      className="mt-1 rounded-lg border border-border w-full aspect-video"
+                    >
+                      <p className="text-sm text-muted-foreground">Seu navegador não suporta vídeo.</p>
+                    </video>
                   </div>
                 )}
               </div>

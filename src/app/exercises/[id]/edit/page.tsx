@@ -69,7 +69,7 @@ export default function EditExercisePage() {
         difficulty: exercise.difficulty ?? undefined,
         movement_group_id: exercise.movement_group_id,
         muscle_group_id: exercise.muscle_group_id,
-        equipment_ids: exercise.equipment_ids ?? [],
+        equipment_ids: exercise.equipment?.map((e) => e.id) ?? [],
       });
     }
   }, [exercise, form]);
