@@ -54,7 +54,7 @@ export async function meAction() {
     return null;
   }
 
-  const res = await fetch(`${API_URL}/auth/me`, {
+  const res = await fetch(`${API_URL}/users/me`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,

@@ -34,6 +34,14 @@ export interface UpdateProfileRequest {
   new_password?: string;
 }
 
+export interface AdminCreateUserRequest {
+  email: string;
+  password: string;
+  name: string;
+  role?: UserRole;
+  is_active?: boolean;
+}
+
 export interface AdminUpdateUserRequest {
   name?: string;
   role?: UserRole;

@@ -54,6 +54,16 @@ export type SubstitutionFormData = z.infer<typeof substitutionSchema>;
 
 const userRoles = ["admin", "user"] as const;
 
+export const userCreateSchema = z.object({
+  name: z.string().min(1, "Nome é obrigatório").max(150, "Máximo de 150 caracteres"),
+  email: z.string().email("Email inválido").max(255, "Máximo de 255 caracteres"),
+  password: z.string().min(8, "Mínimo de 8 caracteres").max(128, "Máximo de 128 caracteres"),
+  role: z.enum(userRoles, { message: "Função inválida" }).default("user"),
+  is_active: z.boolean().default(true),
+});
+
+export type UserCreateFormData = z.input<typeof userCreateSchema>;
+
 export const userEditSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").max(255, "Máximo de 255 caracteres"),
   role: z.enum(userRoles, { message: "Função inválida" }),

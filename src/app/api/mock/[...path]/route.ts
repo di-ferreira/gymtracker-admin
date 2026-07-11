@@ -126,7 +126,7 @@ async function route(req: NextRequest, path: string[]): Promise<NextResponse> {
     }
     return json({ ok: true });
   }
-  if (p === "auth/me") { await maybeDelay(); return json(state.users[0]); }
+  if (p === "auth/me" || p === "users/me") { await maybeDelay(); return json(state.users[0]); }
   if (p === "auth/login") return json({ access_token: "fake-test-token" });
   if (p === "admin/media/upload") return json({ url: "https://example.com/uploads/test.gif", path: "exercises/test.gif", filename: "test.gif" });
   if (p === "admin/workouts" || (p.startsWith("admin/workouts/"))) {
