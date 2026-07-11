@@ -5,7 +5,6 @@ import { DashboardLayout } from "@/components/dashboard-layout";
 import {
   useWorkout,
   useDeleteWorkout,
-  useWorkoutExercises,
   useAddWorkoutExercise,
   useRemoveWorkoutExercise,
   useUpdateWorkoutExercise,
@@ -48,7 +47,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { WorkoutExerciseCreate, WorkoutExerciseUpdate } from "@/types";
+import type { WorkoutExercise, WorkoutExerciseCreate, WorkoutExerciseUpdate } from "@/types";
 
 export default function WorkoutDetailPage() {
   const params = useParams();
@@ -57,14 +56,11 @@ export default function WorkoutDetailPage() {
   const { data, isLoading } = useWorkout(id);
   const deleteWorkout = useDeleteWorkout();
   const { data: exercisesData } = useExerciseList({ per_page: 200 });
-  const {
-    data: workoutExercises,
-    isLoading: exercisesLoading,
-  } = useWorkoutExercises(id);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [addOpen, setAddOpen] = useState(false);
   const [editingExercise, setEditingExercise] = useState<string | null>(null);
   const workout = data?.data;
+  const workoutExercises = workout?.exercises ?? [];
 
   const exerciseMap = new Map(exercisesData?.data.map((e) => [e.id, e.name]));
 
@@ -177,13 +173,13 @@ export default function WorkoutDetailPage() {
             </div>
           </CardHeader>
           <CardContent>
-            {exercisesLoading ? (
+            {isLoading ? (
               <div className="space-y-3">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <Skeleton key={i} className="h-16 w-full" />
                 ))}
               </div>
-            ) : !workoutExercises || workoutExercises.length === 0 ? (
+            ) : workoutExercises.length === 0 ? (
               <p className="text-sm text-muted-foreground text-center py-8">
                 Nenhum exercício neste treino
               </p>
@@ -242,6 +238,7 @@ export default function WorkoutDetailPage() {
           >
             <EditExerciseDialog
               workoutId={id}
+              workoutExercises={workoutExercises}
               workoutExerciseId={editingExercise}
               open={!!editingExercise}
               onOpenChange={(open) => { if (!open) setEditingExercise(null); }}
@@ -352,18 +349,19 @@ function AddExerciseDialog({
 
 function EditExerciseDialog({
   workoutId,
+  workoutExercises,
   workoutExerciseId,
   open,
   onOpenChange,
 }: {
   workoutId: string;
+  workoutExercises: WorkoutExercise[];
   workoutExerciseId: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { data: weList } = useWorkoutExercises(workoutId);
   const updateExercise = useUpdateWorkoutExercise();
-  const we = weList?.find((e) => e.id === workoutExerciseId);
+  const we = workoutExercises.find((e) => e.id === workoutExerciseId);
 
   const [sets, setSets] = useState(String(we?.sets ?? ""));
   const [reps, setReps] = useState(String(we?.reps ?? ""));

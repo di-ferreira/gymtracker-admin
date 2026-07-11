@@ -9,7 +9,6 @@ import {
   apiCreateOne,
   apiUpdateOne,
   apiRemoveOne,
-  apiGet,
   apiPost,
   apiPatch,
   apiDelete,
@@ -26,7 +25,7 @@ export function useWorkoutList(params?: Record<string, unknown>) {
 export function useWorkout(id: string) {
   return useQuery({
     queryKey: ["workouts", id],
-    queryFn: () => apiGetOne<Workout>(`/admin/workouts/${id}`),
+    queryFn: () => apiGetOne<Workout>(`/workouts/${id}`),
     enabled: !!id,
   });
 }
@@ -46,7 +45,7 @@ export function useUpdateWorkout() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: WorkoutUpdate }) =>
-      apiUpdateOne<Workout>(`/admin/workouts/${id}`, data),
+      apiUpdateOne<Workout>(`/workouts/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["workouts"] });
     },
@@ -56,18 +55,10 @@ export function useUpdateWorkout() {
 export function useDeleteWorkout() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => apiRemoveOne(`/admin/workouts/${id}`),
+    mutationFn: (id: string) => apiRemoveOne(`/workouts/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["workouts"] });
     },
-  });
-}
-
-export function useWorkoutExercises(workoutId: string | undefined) {
-  return useQuery({
-    queryKey: ["workout-exercises", workoutId],
-    queryFn: () => apiGet<WorkoutExercise[]>(`/admin/workouts/${workoutId}/exercises/`),
-    enabled: !!workoutId,
   });
 }
 
@@ -75,9 +66,9 @@ export function useAddWorkoutExercise() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ workoutId, data }: { workoutId: string; data: WorkoutExerciseCreate }) =>
-      apiPost<WorkoutExercise>(`/admin/workouts/${workoutId}/exercises/`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["workout-exercises"] });
+      apiPost<WorkoutExercise>(`/workouts/${workoutId}/exercises/`, data),
+    onSuccess: (_data, { workoutId }) => {
+      queryClient.invalidateQueries({ queryKey: ["workouts", workoutId] });
     },
   });
 }
@@ -86,9 +77,9 @@ export function useUpdateWorkoutExercise() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ workoutId, exerciseId, data }: { workoutId: string; exerciseId: string; data: WorkoutExerciseUpdate }) =>
-      apiPatch<WorkoutExercise>(`/admin/workouts/${workoutId}/exercises/${exerciseId}`, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["workout-exercises"] });
+      apiPatch<WorkoutExercise>(`/workouts/${workoutId}/exercises/${exerciseId}`, data),
+    onSuccess: (_data, { workoutId }) => {
+      queryClient.invalidateQueries({ queryKey: ["workouts", workoutId] });
     },
   });
 }
@@ -97,9 +88,9 @@ export function useRemoveWorkoutExercise() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ workoutId, exerciseId }: { workoutId: string; exerciseId: string }) =>
-      apiDelete(`/admin/workouts/${workoutId}/exercises/${exerciseId}`),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["workout-exercises"] });
+      apiDelete(`/workouts/${workoutId}/exercises/${exerciseId}`),
+    onSuccess: (_data, { workoutId }) => {
+      queryClient.invalidateQueries({ queryKey: ["workouts", workoutId] });
     },
   });
 }
