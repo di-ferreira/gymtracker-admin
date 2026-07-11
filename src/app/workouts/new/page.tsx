@@ -17,7 +17,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import {
   Form,
@@ -40,7 +39,7 @@ export default function CreateWorkoutPage() {
     resolver: zodResolver(workoutSchema),
     defaultValues: {
       name: "",
-      description: "",
+      notes: "",
       user_id: "",
     },
   });
@@ -49,14 +48,15 @@ export default function CreateWorkoutPage() {
     try {
       const payload: WorkoutCreate = {
         name: data.name,
-        description: data.description || undefined,
-        user_id: data.user_id,
+        notes: data.notes || null,
+        user_id: data.user_id || undefined,
       };
       await createWorkout.mutateAsync(payload);
       toast.success("Treino criado com sucesso");
       router.push("/workouts");
-    } catch {
-      toast.error("Erro ao criar treino");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erro ao criar treino";
+      toast.error(msg);
     }
   }
 
@@ -72,7 +72,7 @@ export default function CreateWorkoutPage() {
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Novo Treino</h1>
             <p className="text-muted-foreground text-sm mt-1">
-              Crie um novo treino para um usuário
+              Crie um novo treino
             </p>
           </div>
         </div>
@@ -100,13 +100,13 @@ export default function CreateWorkoutPage() {
 
                 <FormField
                   control={form.control}
-                  name="description"
+                  name="notes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Descrição</FormLabel>
+                      <FormLabel>Observações</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Descrição do treino"
+                          placeholder="Observações do treino"
                           className="min-h-24"
                           {...field}
                         />
@@ -121,11 +121,15 @@ export default function CreateWorkoutPage() {
                   name="user_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Usuário</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <FormLabel>Usuário (opcional)</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value ?? ""}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Selecione o usuário" />
+                            <span>
+                              {field.value
+                                ? users?.data.find((u) => u.id === field.value)?.name ?? field.value
+                                : "Selecione o usuário"}
+                            </span>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>

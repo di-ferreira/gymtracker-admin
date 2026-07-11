@@ -56,7 +56,7 @@ export default function WorkoutListPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Nome</TableHead>
-                <TableHead>Descrição</TableHead>
+                <TableHead>Observações</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -85,7 +85,7 @@ export default function WorkoutListPage() {
                       </Link>
                     </TableCell>
                     <TableCell className="text-muted-foreground">
-                      {workout.description || "—"}
+                      {workout.notes || "—"}
                     </TableCell>
                     <TableCell className="text-right">
                       <Link href={`/workouts/${workout.id}`}>

@@ -244,9 +244,8 @@ export interface AlternativeCreate {
 export interface Workout {
   id: string;
   name: string;
-  description: string | null;
+  notes: string | null;
   user_id: string;
-  user?: User;
   exercises?: WorkoutExercise[];
   created_at: string;
   updated_at: string;
@@ -254,14 +253,13 @@ export interface Workout {
 
 export interface WorkoutCreate {
   name: string;
-  description?: string;
-  user_id: string;
+  notes?: string | null;
+  user_id?: string;
 }
 
 export interface WorkoutUpdate {
-  name?: string;
-  description?: string;
-  user_id?: string;
+  name?: string | null;
+  notes?: string | null;
 }
 
 export interface WorkoutExercise {
@@ -269,33 +267,30 @@ export interface WorkoutExercise {
   workout_id: string;
   exercise_id: string;
   exercise?: Exercise;
+  sort_order: number;
   sets: number | null;
   reps: number | null;
   weight: number | null;
-  rest_seconds: number | null;
   notes: string | null;
-  order: number;
   created_at: string;
   updated_at: string;
 }
 
 export interface WorkoutExerciseCreate {
   exercise_id: string;
+  sort_order?: number;
   sets?: number;
   reps?: number;
   weight?: number;
-  rest_seconds?: number;
   notes?: string;
-  order?: number;
 }
 
 export interface WorkoutExerciseUpdate {
+  sort_order?: number | null;
   sets?: number | null;
   reps?: number | null;
   weight?: number | null;
-  rest_seconds?: number | null;
   notes?: string | null;
-  order?: number;
 }
 
 export interface WorkoutReorder {

@@ -32,7 +32,6 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -74,8 +73,9 @@ export default function WorkoutDetailPage() {
       await deleteWorkout.mutateAsync(id);
       toast.success("Treino excluído com sucesso");
       router.push("/workouts");
-    } catch {
-      toast.error("Erro ao excluir treino");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erro ao excluir treino";
+      toast.error(msg);
     }
   }
 
@@ -120,9 +120,9 @@ export default function WorkoutDetailPage() {
               <h1 className="text-2xl font-bold tracking-tight">
                 {workout.name}
               </h1>
-              {workout.description && (
+              {workout.notes && (
                 <p className="text-muted-foreground text-sm mt-1">
-                  {workout.description}
+                  {workout.notes}
                 </p>
               )}
             </div>
@@ -191,7 +191,7 @@ export default function WorkoutDetailPage() {
               <div className="space-y-2">
                 {workoutExercises
                   .slice()
-                  .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+                  .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
                   .map((we) => (
                     <div
                       key={we.id}
@@ -200,7 +200,7 @@ export default function WorkoutDetailPage() {
                       <div className="flex items-center gap-1.5 mt-0.5">
                         <GripVertical className="h-4 w-4 text-muted-foreground shrink-0" />
                         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-xs font-medium text-primary shrink-0">
-                          {(we.order ?? 0) + 1}
+                          {(we.sort_order ?? 0) + 1}
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
@@ -211,7 +211,6 @@ export default function WorkoutDetailPage() {
                           {we.sets != null && <span>{we.sets} séries</span>}
                           {we.reps != null && <span>{we.reps} reps</span>}
                           {we.weight != null && <span>{we.weight} kg</span>}
-                          {we.rest_seconds != null && <span>{we.rest_seconds}s descanso</span>}
                         </div>
                         {we.notes && (
                           <p className="text-xs text-muted-foreground mt-1 italic">
@@ -269,7 +268,6 @@ function AddExerciseDialog({
   const [sets, setSets] = useState("");
   const [reps, setReps] = useState("");
   const [weight, setWeight] = useState("");
-  const [restSeconds, setRestSeconds] = useState("");
   const [notes, setNotes] = useState("");
 
   async function handleSubmit(e: React.FormEvent) {
@@ -278,10 +276,10 @@ function AddExerciseDialog({
     try {
       const payload: WorkoutExerciseCreate = {
         exercise_id: exerciseId,
+        sort_order: 0,
         sets: sets ? Number(sets) : undefined,
         reps: reps ? Number(reps) : undefined,
         weight: weight ? Number(weight) : undefined,
-        rest_seconds: restSeconds ? Number(restSeconds) : undefined,
         notes: notes || undefined,
       };
       await addExercise.mutateAsync({ workoutId, data: payload });
@@ -290,11 +288,11 @@ function AddExerciseDialog({
       setSets("");
       setReps("");
       setWeight("");
-      setRestSeconds("");
       setNotes("");
       onOpenChange(false);
-    } catch {
-      toast.error("Erro ao adicionar exercício");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erro ao adicionar exercício";
+      toast.error(msg);
     }
   }
 
@@ -308,7 +306,11 @@ function AddExerciseDialog({
           <label className="text-sm font-medium">Exercício</label>
           <Select value={exerciseId} onValueChange={(v) => v && setExerciseId(v)}>
             <SelectTrigger>
-              <SelectValue placeholder="Selecione..." />
+              <span>
+                {exerciseId
+                  ? exercises?.data.find((ex) => ex.id === exerciseId)?.name ?? exerciseId
+                  : "Selecione..."}
+              </span>
             </SelectTrigger>
             <SelectContent>
               {exercises?.data.map((ex) => (
@@ -333,10 +335,7 @@ function AddExerciseDialog({
             <Input type="number" min="0" step="0.1" value={weight} onChange={(e) => setWeight(e.target.value)} />
           </div>
         </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Descanso (s)</label>
-          <Input type="number" min="0" value={restSeconds} onChange={(e) => setRestSeconds(e.target.value)} />
-        </div>
+
         <div className="space-y-2">
           <label className="text-sm font-medium">Observações</label>
           <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
@@ -369,7 +368,6 @@ function EditExerciseDialog({
   const [sets, setSets] = useState(String(we?.sets ?? ""));
   const [reps, setReps] = useState(String(we?.reps ?? ""));
   const [weight, setWeight] = useState(String(we?.weight ?? ""));
-  const [restSeconds, setRestSeconds] = useState(String(we?.rest_seconds ?? ""));
   const [notes, setNotes] = useState(we?.notes ?? "");
 
   useState(() => {
@@ -377,7 +375,6 @@ function EditExerciseDialog({
       setSets(String(we.sets ?? ""));
       setReps(String(we.reps ?? ""));
       setWeight(String(we.weight ?? ""));
-      setRestSeconds(String(we.rest_seconds ?? ""));
       setNotes(we.notes ?? "");
     }
   });
@@ -389,7 +386,6 @@ function EditExerciseDialog({
         sets: sets ? Number(sets) : undefined,
         reps: reps ? Number(reps) : undefined,
         weight: weight ? Number(weight) : undefined,
-        rest_seconds: restSeconds ? Number(restSeconds) : undefined,
         notes: notes || undefined,
       };
       await updateExercise.mutateAsync({
@@ -399,8 +395,9 @@ function EditExerciseDialog({
       });
       toast.success("Exercício atualizado");
       onOpenChange(false);
-    } catch {
-      toast.error("Erro ao atualizar exercício");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erro ao atualizar exercício";
+      toast.error(msg);
     }
   }
 
@@ -423,10 +420,6 @@ function EditExerciseDialog({
             <label className="text-sm font-medium">Peso (kg)</label>
             <Input type="number" min="0" step="0.1" value={weight} onChange={(e) => setWeight(e.target.value)} />
           </div>
-        </div>
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Descanso (s)</label>
-          <Input type="number" min="0" value={restSeconds} onChange={(e) => setRestSeconds(e.target.value)} />
         </div>
         <div className="space-y-2">
           <label className="text-sm font-medium">Observações</label>
@@ -455,8 +448,9 @@ function RemoveExerciseButton({
     try {
       await removeExercise.mutateAsync({ workoutId, exerciseId });
       toast.success("Exercício removido");
-    } catch {
-      toast.error("Erro ao remover exercício");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erro ao remover exercício";
+      toast.error(msg);
     }
   }
 

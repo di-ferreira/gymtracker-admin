@@ -82,8 +82,8 @@ export type InstructionFormData = z.input<typeof instructionSchema>;
 
 export const workoutSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório").max(255, "Máximo de 255 caracteres"),
-  description: z.string().optional(),
-  user_id: z.string().uuid("Usuário inválido"),
+  notes: z.string().optional(),
+  user_id: z.string().uuid("Usuário inválido").optional(),
 });
 
 export type WorkoutFormData = z.input<typeof workoutSchema>;

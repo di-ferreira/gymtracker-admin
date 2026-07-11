@@ -19,7 +19,7 @@ import type { Workout, WorkoutCreate, WorkoutUpdate, WorkoutExercise, WorkoutExe
 export function useWorkoutList(params?: Record<string, unknown>) {
   return useQuery({
     queryKey: ["workouts", params],
-    queryFn: () => apiList<Workout>("/admin/workouts", params),
+    queryFn: () => apiList<Workout>("/workouts", params),
   });
 }
 
@@ -35,7 +35,7 @@ export function useCreateWorkout() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: WorkoutCreate) =>
-      apiCreateOne<Workout>("/admin/workouts", data),
+      apiCreateOne<Workout>("/workouts", data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["workouts"] });
     },

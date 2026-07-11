@@ -50,7 +50,7 @@ const initialUsers = [
 
 const config = { delay: 0, emptyMode: false };
 
-const state = clone({ exercises: initialExercises, equipment: mockEquipment, muscleGroups: mockMuscleGroups, movementGroups: mockMovementGroups, substitutions: initialSubstitutions, users: initialUsers });
+const state = clone({ exercises: initialExercises, equipment: mockEquipment, muscleGroups: mockMuscleGroups, movementGroups: mockMovementGroups, substitutions: initialSubstitutions, users: initialUsers, workouts: [] });
 
 let idCounter = 100;
 const nextId = () => `mock-${++idCounter}`;
@@ -60,7 +60,7 @@ const json = (data: unknown, status = 200) => new NextResponse(JSON.stringify(da
 const colMap: Record<string, unknown[]> = {
   exercises: state.exercises, equipment: state.equipment,
   "muscle-groups": state.muscleGroups, "movement-groups": state.movementGroups,
-  users: state.users,
+  users: state.users, workouts: state.workouts,
 };
 
 function applySearch(items: Record<string, unknown>[], search?: string | null) {
@@ -107,7 +107,7 @@ async function route(req: NextRequest, path: string[]): Promise<NextResponse> {
   const p = path.join("/");
 
   if (p === "__reset") {
-    Object.assign(state, clone({ exercises: initialExercises, equipment: mockEquipment, muscleGroups: mockMuscleGroups, movementGroups: mockMovementGroups, substitutions: initialSubstitutions, users: initialUsers }));
+    Object.assign(state, clone({ exercises: initialExercises, equipment: mockEquipment, muscleGroups: mockMuscleGroups, movementGroups: mockMovementGroups, substitutions: initialSubstitutions, users: initialUsers, workouts: [] }));
     config.delay = 0; config.emptyMode = false; idCounter = 100;
     return json({ ok: true });
   }
@@ -129,9 +129,8 @@ async function route(req: NextRequest, path: string[]): Promise<NextResponse> {
   if (p === "auth/me" || p === "users/me") { await maybeDelay(); return json(state.users[0]); }
   if (p === "auth/login") return json({ access_token: "fake-test-token" });
   if (p === "admin/media/upload") return json({ url: "https://example.com/uploads/test.gif", path: "exercises/test.gif", filename: "test.gif" });
-  if (p === "admin/workouts" || (p.startsWith("admin/workouts/"))) {
-    return json([]); // workouts not used in tests
-  }
+
+  if (path[0] === "workouts") return handleCrud(req, "workouts", path[1]);
 
   if (path[0] === "admin" && path[1] === "catalog") {
     const resource = path[2];
