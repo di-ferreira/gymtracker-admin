@@ -32,6 +32,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Weight } from "lucide-react";
 import Link from "next/link";
+import { MediaUploadField } from "@/components/media-upload-field";
 
 export default function CreateExercisePage() {
   const router = useRouter();
@@ -295,71 +296,52 @@ export default function CreateExercisePage() {
                   control={form.control}
                   name="thumbnail_url"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Thumbnail (URL)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="https://..."
-                          value={field.value ?? ""}
-                          onChange={(e) => field.onChange(e.target.value || null)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                    <MediaUploadField
+                      label="Thumbnail"
+                      accept="image/*"
+                      value={field.value}
+                      onChange={(url) => field.onChange(url)}
+                      previewType="image"
+                    />
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="image_url"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Imagem (URL)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="https://..."
-                          value={field.value ?? ""}
-                          onChange={(e) => field.onChange(e.target.value || null)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                    <MediaUploadField
+                      label="Imagem"
+                      accept="image/*"
+                      value={field.value}
+                      onChange={(url) => field.onChange(url)}
+                      previewType="image"
+                    />
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="gif_url"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>GIF (URL)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="https://..."
-                          value={field.value ?? ""}
-                          onChange={(e) => field.onChange(e.target.value || null)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                    <MediaUploadField
+                      label="GIF"
+                      accept="image/*,.gif"
+                      value={field.value}
+                      onChange={(url) => field.onChange(url)}
+                      previewType="image"
+                    />
                   )}
                 />
-
                 <FormField
                   control={form.control}
                   name="video_url"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Vídeo (URL)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="https://..."
-                          value={field.value ?? ""}
-                          onChange={(e) => field.onChange(e.target.value || null)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                    <MediaUploadField
+                      label="Vídeo"
+                      accept="video/*"
+                      value={field.value}
+                      onChange={(url) => field.onChange(url)}
+                      previewType="video"
+                    />
                   )}
                 />
               </CardContent>
