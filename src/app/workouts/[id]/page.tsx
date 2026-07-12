@@ -10,6 +10,7 @@ import {
   useUpdateWorkoutExercise,
 } from "@/hooks/use-workouts";
 import { useExerciseList } from "@/hooks/use-exercises";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -26,13 +27,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -47,7 +51,14 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { WorkoutExercise, WorkoutExerciseCreate, WorkoutExerciseUpdate } from "@/types";
+import type { Exercise, WorkoutExercise, WorkoutExerciseUpdate } from "@/types";
+
+const difficultyColor: Record<string, string> = {
+  Beginner: 'bg-green-500/10 text-green-500',
+  Intermediate: 'bg-yellow-500/10 text-yellow-500',
+  Advanced: 'bg-red-500/10 text-red-500',
+  Expert: 'bg-purple-500/10 text-purple-500',
+};
 
 export default function WorkoutDetailPage() {
   const params = useParams();
@@ -55,14 +66,30 @@ export default function WorkoutDetailPage() {
   const id = params.id as string;
   const { data, isLoading } = useWorkout(id);
   const deleteWorkout = useDeleteWorkout();
-  const { data: exercisesData } = useExerciseList({ per_page: 200 });
+  const addExercise = useAddWorkoutExercise();
+  const { data: exercisesData, isLoading: exercisesLoading } = useExerciseList({ per_page: 200 });
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [addOpen, setAddOpen] = useState(false);
   const [editingExercise, setEditingExercise] = useState<string | null>(null);
+  const [exerciseSearch, setExerciseSearch] = useState("");
+  const { data: catalogExercises, isLoading: catalogLoading } = useExerciseList({ search: exerciseSearch, per_page: 20 });
   const workout = data?.data;
   const workoutExercises = workout?.exercises ?? [];
 
-  const exerciseMap = new Map(exercisesData?.data.map((e) => [e.id, e.name]));
+  const exerciseMap = new Map(exercisesData?.data.map((e) => [e.id, e]));
+
+  async function handleAddExercise(exerciseId: string) {
+    const nextOrder = workoutExercises.length;
+    try {
+      await addExercise.mutateAsync({
+        workoutId: id,
+        data: { exercise_id: exerciseId, sort_order: nextOrder },
+      });
+      toast.success("Exercício adicionado");
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Erro ao adicionar exercício";
+      toast.error(msg);
+    }
+  }
 
   async function handleDelete() {
     try {
@@ -159,21 +186,10 @@ export default function WorkoutDetailPage() {
                 <Dumbbell className="h-5 w-5 text-primary" />
                 Exercícios ({workoutExercises?.length ?? 0})
               </CardTitle>
-              <Dialog open={addOpen} onOpenChange={setAddOpen}>
-                <DialogTrigger render={<Button size="sm" />}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Adicionar Exercício
-                </DialogTrigger>
-                <AddExerciseDialog
-                  workoutId={id}
-                  open={addOpen}
-                  onOpenChange={setAddOpen}
-                />
-              </Dialog>
             </div>
           </CardHeader>
           <CardContent>
-            {isLoading ? (
+            {isLoading || exercisesLoading ? (
               <div className="space-y-3">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <Skeleton key={i} className="h-16 w-full" />
@@ -199,9 +215,25 @@ export default function WorkoutDetailPage() {
                           {(we.sort_order ?? 0) + 1}
                         </span>
                       </div>
-                      <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 min-w-0">
+                        {(() => {
+                          const imgSrc = we.exercise?.gif_url ?? exerciseMap.get(we.exercise_id)?.gif_url ?? undefined;
+                          return imgSrc ? (
+                            <img
+                              src={imgSrc}
+                              alt=""
+                              className="h-10 w-10 rounded object-cover shrink-0"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = "none";
+                              }}
+                            />
+                          ) : (
+                            <div className="h-10 w-10 rounded bg-muted shrink-0" />
+                          );
+                        })()}
+                        <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-foreground">
-                          {exerciseMap.get(we.exercise_id) ?? we.exercise_id}
+                          {we.exercise?.name ?? exerciseMap.get(we.exercise_id)?.name ?? we.exercise_id}
                         </p>
                         <div className="flex gap-3 text-xs text-muted-foreground mt-1">
                           {we.sets != null && <span>{we.sets} séries</span>}
@@ -213,6 +245,7 @@ export default function WorkoutDetailPage() {
                             {we.notes}
                           </p>
                         )}
+                      </div>
                       </div>
                       <div className="flex items-center gap-1 shrink-0">
                         <Button
@@ -226,6 +259,107 @@ export default function WorkoutDetailPage() {
                       </div>
                     </div>
                   ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Catálogo de Exercícios</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="relative max-w-sm mb-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar exercícios..."
+                value={exerciseSearch}
+                onChange={(e) => setExerciseSearch(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+            <div className="rounded-lg border border-border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>Dificuldade</TableHead>
+                    <TableHead>Grupo Muscular</TableHead>
+                    <TableHead>Grupo de Movimento</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {catalogLoading ? (
+                    Array.from({ length: 5 }).map((_, i) => (
+                      <TableRow key={i}>
+                        <TableCell><Skeleton className="h-5 w-40" /></TableCell>
+                        <TableCell><Skeleton className="h-5 w-24" /></TableCell>
+                        <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+                        <TableCell><Skeleton className="h-5 w-32" /></TableCell>
+                      </TableRow>
+                    ))
+                  ) : catalogExercises?.data.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center py-12 text-muted-foreground">
+                        Nenhum exercício encontrado
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    catalogExercises?.data.map((exercise) => (
+                      <TableRow key={exercise.id}>
+                        <TableCell className="font-medium text-foreground">
+                          <div className="flex items-center gap-3">
+                            {exercise.gif_url ? (
+                              <img
+                                src={exercise.gif_url}
+                                alt=""
+                                className="h-10 w-10 rounded object-cover shrink-0"
+                                onError={(e) => {
+                                  (e.target as HTMLImageElement).style.display = "none";
+                                }}
+                              />
+                            ) : (
+                              <div className="h-10 w-10 rounded bg-muted shrink-0" />
+                            )}
+                            <span>{exercise.name}</span>
+                            <Button
+                              variant="ghost"
+                              size="icon-sm"
+                              onClick={() => handleAddExercise(exercise.id)}
+                              disabled={addExercise.isPending}
+                              title="Adicionar ao treino"
+                            >
+                              <Plus className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {exercise.difficulty ? (
+                            <Badge
+                              variant="secondary"
+                              className={difficultyColor[exercise.difficulty]}
+                            >
+                              {exercise.difficulty}
+                            </Badge>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {exercise.muscle_group.name}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {exercise.movement_group.name}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+            {catalogExercises && (
+              <div className="text-sm text-muted-foreground text-center mt-4">
+                {catalogExercises.total} exercício{catalogExercises.total !== 1 ? "s" : ""} encontrado{catalogExercises.total !== 1 ? "s" : ""}
               </div>
             )}
           </CardContent>
@@ -247,103 +381,6 @@ export default function WorkoutDetailPage() {
         )}
       </div>
     </DashboardLayout>
-  );
-}
-
-function AddExerciseDialog({
-  workoutId,
-  open,
-  onOpenChange,
-}: {
-  workoutId: string;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}) {
-  const { data: exercises } = useExerciseList({ per_page: 200 });
-  const addExercise = useAddWorkoutExercise();
-  const [exerciseId, setExerciseId] = useState("");
-  const [sets, setSets] = useState("");
-  const [reps, setReps] = useState("");
-  const [weight, setWeight] = useState("");
-  const [notes, setNotes] = useState("");
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!exerciseId) return;
-    try {
-      const payload: WorkoutExerciseCreate = {
-        exercise_id: exerciseId,
-        sort_order: 0,
-        sets: sets ? Number(sets) : undefined,
-        reps: reps ? Number(reps) : undefined,
-        weight: weight ? Number(weight) : undefined,
-        notes: notes || undefined,
-      };
-      await addExercise.mutateAsync({ workoutId, data: payload });
-      toast.success("Exercício adicionado");
-      setExerciseId("");
-      setSets("");
-      setReps("");
-      setWeight("");
-      setNotes("");
-      onOpenChange(false);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Erro ao adicionar exercício";
-      toast.error(msg);
-    }
-  }
-
-  return (
-    <DialogContent>
-      <DialogHeader>
-        <DialogTitle>Adicionar Exercício</DialogTitle>
-      </DialogHeader>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Exercício</label>
-          <Select value={exerciseId} onValueChange={(v) => v && setExerciseId(v)}>
-            <SelectTrigger>
-              <span>
-                {exerciseId
-                  ? exercises?.data.find((ex) => ex.id === exerciseId)?.name ?? exerciseId
-                  : "Selecione..."}
-              </span>
-            </SelectTrigger>
-            <SelectContent>
-              {exercises?.data.map((ex) => (
-                <SelectItem key={ex.id} value={ex.id}>
-                  {ex.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="grid grid-cols-3 gap-3">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Séries</label>
-            <Input type="number" min="0" value={sets} onChange={(e) => setSets(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Reps</label>
-            <Input type="number" min="0" value={reps} onChange={(e) => setReps(e.target.value)} />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Peso (kg)</label>
-            <Input type="number" min="0" step="0.1" value={weight} onChange={(e) => setWeight(e.target.value)} />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Observações</label>
-          <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} />
-        </div>
-        <DialogFooter>
-          <Button type="submit" disabled={!exerciseId || addExercise.isPending}>
-            {addExercise.isPending ? "Adicionando..." : "Adicionar"}
-          </Button>
-        </DialogFooter>
-      </form>
-    </DialogContent>
   );
 }
 
